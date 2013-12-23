@@ -1,0 +1,1349 @@
+2013/12/23 20:56:16 - Error while retrieving nvc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 113, in makeRequest
+    response = self.conn.getresponse().read()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1045, in getresponse
+    response.begin()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 409, in begin
+    version, status, reason = self._read_status()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 373, in _read_status
+    raise BadStatusLine(line)
+BadStatusLine: ''
+
+--------------------------------------------------------------------------------
+2013/12/23 20:56:16 - Error while retrieving ftc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 20:56:16 - Error while retrieving ppc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 20:56:16 - Error while retrieving btc_eur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 20:56:16 - Error while retrieving btc_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 20:56:16 - Error while retrieving usd_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 20:56:16 - Error while retrieving trc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 20:56:16 - Error while retrieving nmc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:12:21 - Error while retrieving ltc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 113, in makeRequest
+    response = self.conn.getresponse().read()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1045, in getresponse
+    response.begin()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 409, in begin
+    version, status, reason = self._read_status()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 373, in _read_status
+    raise BadStatusLine(line)
+BadStatusLine: ''
+
+--------------------------------------------------------------------------------
+2013/12/23 21:12:21 - Error while retrieving nvc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:12:21 - Error while retrieving ftc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:12:21 - Error while retrieving ppc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:12:21 - Error while retrieving btc_eur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:12:21 - Error while retrieving btc_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:12:21 - Error while retrieving usd_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:12:21 - Error while retrieving trc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:12:21 - Error while retrieving nmc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:19:24 - Error while retrieving nmc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 113, in makeRequest
+    response = self.conn.getresponse().read()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1045, in getresponse
+    response.begin()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 409, in begin
+    version, status, reason = self._read_status()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 373, in _read_status
+    raise BadStatusLine(line)
+BadStatusLine: ''
+
+--------------------------------------------------------------------------------
+2013/12/23 21:21:26 - Error while retrieving trc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 113, in makeRequest
+    response = self.conn.getresponse().read()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1045, in getresponse
+    response.begin()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 409, in begin
+    version, status, reason = self._read_status()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 373, in _read_status
+    raise BadStatusLine(line)
+BadStatusLine: ''
+
+--------------------------------------------------------------------------------
+2013/12/23 21:21:26 - Error while retrieving nmc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving nvc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 113, in makeRequest
+    response = self.conn.getresponse().read()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1045, in getresponse
+    response.begin()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 409, in begin
+    version, status, reason = self._read_status()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 373, in _read_status
+    raise BadStatusLine(line)
+BadStatusLine: ''
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving eur_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving ltc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving nvc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving ftc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving ppc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving btc_eur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving btc_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving usd_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving trc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/23 21:48:28 - Error while retrieving nmc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving usd_rur depth
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 27, in _runBot
+    asks, bids = btceapi.getDepth(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 67, in getDepth
+    depth = connection.makeJSONRequest("/api/2/%s/depth" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 113, in makeRequest
+    response = self.conn.getresponse().read()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1045, in getresponse
+    response.begin()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 409, in begin
+    version, status, reason = self._read_status()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 373, in _read_status
+    raise BadStatusLine(line)
+BadStatusLine: ''
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving trc_btc depth
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 27, in _runBot
+    asks, bids = btceapi.getDepth(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 67, in getDepth
+    depth = connection.makeJSONRequest("/api/2/%s/depth" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving nmc_btc depth
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 27, in _runBot
+    asks, bids = btceapi.getDepth(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 67, in getDepth
+    depth = connection.makeJSONRequest("/api/2/%s/depth" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving ppc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving xpm_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving ltc_eur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving btc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving ltc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving nmc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving ltc_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving nvc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving eur_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving ltc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving nvc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving ftc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving ppc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving btc_eur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving btc_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving usd_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving trc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:50:12 - Error while retrieving nmc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 00:59:21 - Error while retrieving trc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 113, in makeRequest
+    response = self.conn.getresponse().read()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1045, in getresponse
+    response.begin()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 409, in begin
+    version, status, reason = self._read_status()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 373, in _read_status
+    raise BadStatusLine(line)
+BadStatusLine: ''
+
+--------------------------------------------------------------------------------
+2013/12/24 00:59:21 - Error while retrieving nmc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving xpm_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 113, in makeRequest
+    response = self.conn.getresponse().read()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1045, in getresponse
+    response.begin()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 409, in begin
+    version, status, reason = self._read_status()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 373, in _read_status
+    raise BadStatusLine(line)
+BadStatusLine: ''
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving ltc_eur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving btc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving ltc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving nmc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving ltc_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving nvc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving eur_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving ltc_usd trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving nvc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving ftc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving ppc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving btc_eur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving btc_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving usd_rur trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving trc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
+2013/12/24 01:06:18 - Error while retrieving nmc_btc trade history
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/btcebot/bot.py", line 40, in _runBot
+    trades = btceapi.getTradeHistory(p, conn)
+  File "/Library/Python/2.7/site-packages/btceapi/public.py", line 111, in getTradeHistory
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 118, in makeJSONRequest
+    response = self.makeRequest(url, extra_headers, params)
+  File "/Library/Python/2.7/site-packages/btceapi/common.py", line 112, in makeRequest
+    self.conn.request("POST", url, params, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 973, in request
+    self._send_request(method, url, body, headers)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 1001, in _send_request
+    self.putrequest(method, url, **skips)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 871, in putrequest
+    raise CannotSendRequest()
+CannotSendRequest
+
+--------------------------------------------------------------------------------
