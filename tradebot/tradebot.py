@@ -2,6 +2,7 @@ import time
 import btceapi
 import btcebot
 import saver
+import analysis
 
 
 class TradeBot(btcebot.TraderBase):
@@ -13,6 +14,7 @@ class TradeBot(btcebot.TraderBase):
         btcebot.TraderBase.__init__(self, pairs)
         self.trade_history_seen = {}
         self.saver = saver.DataSaver(database_path)
+        self.analyzer = analysis.Analyzer(database_path)
 
     def onExit(self):
         self.saver.closeDB()
@@ -21,7 +23,9 @@ class TradeBot(btcebot.TraderBase):
     # framework will automatically pick it up and send updates to it.
     def onNewDepth(self, t, pair, asks, bids):
         # print "%s Entering new %s depth" % (t, pair)
-        self.saver.saveDepth(t, pair, asks, bids);
+        self.saver.saveDepth(t, pair, asks, bids)
+
+        self.analyzer.analyze(pair, asks, bids)
 
         if pair == "ltc_usd":
             ask_price, ask_amount = asks[0]

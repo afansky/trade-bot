@@ -18,6 +18,9 @@ class DataSaver(object):
 
     def saveDepth(self, t, pair, asks, bids):
         self.getDB().insertDepth(t, pair, asks, bids)
+        ask_price, ask_amount = asks[0]
+        bid_price, bid_amount = bids[0]
+        self.getDB().insertTick(t, pair, ask_price, ask_amount, bid_price, bid_amount)
 
     def saveTradeHistory(self, new_trades):
         self.getDB().insertTradeHistory(new_trades)

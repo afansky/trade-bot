@@ -1,1 +1,1 @@
-__author__ = 'afansky'
+from analysis import *
