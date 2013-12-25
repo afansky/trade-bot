@@ -3,7 +3,11 @@ import btceapi
 import btcebot
 import saver
 import analysis
+import logging
 
+logging.basicConfig()
+logger = logging.getLogger('tradebot')
+logger.setLevel(logging.INFO)
 
 class TradeBot(btcebot.TraderBase):
     '''
@@ -22,15 +26,14 @@ class TradeBot(btcebot.TraderBase):
     # This overrides the onNewDepth method in the TraderBase class, so the
     # framework will automatically pick it up and send updates to it.
     def onNewDepth(self, t, pair, asks, bids):
-        # print "%s Entering new %s depth" % (t, pair)
         self.saver.saveDepth(t, pair, asks, bids)
 
-        self.analyzer.analyze(pair, asks, bids)
+        self.analyzer.analyze(t, pair, asks, bids)
 
         if pair == "ltc_usd":
             ask_price, ask_amount = asks[0]
             bid_price, bid_amount = bids[0]
-            print("LTC/USD Ask: %s, Bid: %s" % (ask_price, bid_price))
+            logger.info("LTC/USD Ask: %s, Bid: %s" % (ask_price, bid_price))
 
     # This overrides the onNewTradeHistory method in the TraderBase class, so the
     # framework will automatically pick it up and send updates to it.
@@ -46,7 +49,7 @@ class TradeBot(btcebot.TraderBase):
 
 def onBotError(msg, tracebackText):
     tstr = time.strftime("%Y/%m/%d %H:%M:%S")
-    print "%s - %s" % (tstr, msg)
+    logger.error("%s - %s\n%s\n%s\n" % (tstr, msg, tracebackText, "-"*80))
     open("logger-bot-error.log", "a").write(
         "%s - %s\n%s\n%s\n" % (tstr, msg, tracebackText, "-"*80))
 
