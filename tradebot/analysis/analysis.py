@@ -4,9 +4,7 @@ import btcebot
 import logging
 import pandas as pd
 
-logging.basicConfig()
-logger = logging.getLogger('analysis')
-logger.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class Analyzer(object):
@@ -19,7 +17,6 @@ class Analyzer(object):
 
     def analyze(self, t, pair, asks, bids):
         ticks = self.get_db().retrieveTicks(pair, datetime.date(2013, 12, 23), t)
-
         df = self.create_data_frame(ticks)
         signals = []
         for func in self.indicators:
@@ -28,7 +25,7 @@ class Analyzer(object):
                 signals.append(signal)
 
         for signal in signals:
-            logger.info("signal detected")
+            logger.info("Signal detected - %s @ %s" % (signal.message, pair))
 
     def get_db(self):
         if self.db is None:

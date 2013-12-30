@@ -5,9 +5,7 @@ import saver
 import analysis
 import logging
 
-logging.basicConfig()
-logger = logging.getLogger('tradebot')
-logger.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
 
 class TradeBot(btcebot.TraderBase):
     '''
@@ -54,12 +52,12 @@ def onBotError(msg, tracebackText):
         "%s - %s\n%s\n%s\n" % (tstr, msg, tracebackText, "-"*80))
 
 def run(database_path):
-    logger= TradeBot(btceapi.all_pairs, database_path)
+    botlogger = TradeBot(btceapi.all_pairs, database_path)
     #logger= MarketDataLogger(("btc_usd", "ltc_usd"), database_path)
 
     # Create a bot and add the logger to it.
     bot = btcebot.Bot()
-    bot.addTrader(logger)
+    bot.addTrader(botlogger)
 
     # Add an error handler so we can print info about any failures
     bot.addErrorHandler(onBotError)
@@ -68,7 +66,7 @@ def run(database_path):
     # 60 seconds.
     bot.setCollectionInterval(60)
     bot.start()
-    print "Running; press Ctrl-C to stop"
+    logger.info("Running; press Ctrl-C to stop")
 
     try:
         while 1:
@@ -77,12 +75,14 @@ def run(database_path):
             time.sleep(3600)
 
     except KeyboardInterrupt:
-        print "Stopping..."
+        logger.info("Stopping...")
     finally:
         bot.stop()
 
 
 if __name__ == '__main__':
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     import argparse
     parser = argparse.ArgumentParser(description='Simple range trader example.')
     parser.add_argument('--db-path', default='btce.sqlite',

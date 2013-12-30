@@ -2,7 +2,7 @@ import pandas as pd
 import logging
 import signal
 
-logger = logging.getLogger('indicator')
+logger = logging.getLogger(__name__)
 
 
 def moving_average(df, period):

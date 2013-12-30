@@ -1,8 +1,8 @@
 class BuySignal(object):
     def __init__(self):
-        pass
+        self.message = "buy signal"
 
 
 class SellSignal(object):
     def __init__(self):
-        pass
+        self.message = "sell signal"
