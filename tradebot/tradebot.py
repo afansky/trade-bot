@@ -44,6 +44,9 @@ class TradeBot(btcebot.TraderBase):
             self.saver.saveTradeHistory(new_trades)
             history.update(t.tid for t in new_trades)
 
+    def onNewTicker(self, t, pair, ticker):
+        logger.info("Received ticker for %s - %s" % (pair, ticker))
+
 
 def onBotError(msg, tracebackText):
     tstr = time.strftime("%Y/%m/%d %H:%M:%S")
@@ -52,7 +55,9 @@ def onBotError(msg, tracebackText):
         "%s - %s\n%s\n%s\n" % (tstr, msg, tracebackText, "-"*80))
 
 def run(database_path):
-    botlogger = TradeBot(btceapi.all_pairs, database_path)
+    pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd",
+             "ltc_rur", "ltc_eur")
+    botlogger = TradeBot(pairs, database_path)
     #logger= MarketDataLogger(("btc_usd", "ltc_usd"), database_path)
 
     # Create a bot and add the logger to it.
