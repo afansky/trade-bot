@@ -45,6 +45,7 @@ class TradeBot(btcebot.TraderBase):
             history.update(t.tid for t in new_trades)
 
     def onNewTicker(self, t, pair, ticker):
+        self.saver.saveTick(t, pair, ticker)
         logger.info("Received ticker for %s - %s" % (pair, ticker))
 
 
