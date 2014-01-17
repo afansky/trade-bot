@@ -8,16 +8,15 @@ logger = logging.getLogger(__name__)
 
 
 class Analyzer(object):
-
     indicators = [indicator.double_crossover]
 
     def __init__(self, database_path):
         self.database_path = database_path
         self.db = None
 
-    def analyze(self, t, pair, asks, bids):
-        ticks = self.get_db().retrieveTicks(pair, datetime.date(2013, 12, 23), t)
-        df = self.create_data_frame(ticks)
+    def analyze(self, t, pair):
+        ticks = self.get_db().retrieveTicks(pair, datetime.date.fromordinal(datetime.date.today().toordinal() - 1), t)
+        df = create_data_frame(ticks)
         signals = []
         for func in self.indicators:
             signal = func(df)
@@ -32,11 +31,12 @@ class Analyzer(object):
             self.db = btcebot.MarketDatabase(self.database_path)
         return self.db
 
-    def create_data_frame(self, ticks):
-        index = []
-        ticks_new = []
-        for tick in ticks:
-            index.append(tick[0])
-            ticks_new.append(tick[2:])
 
-        return pd.DataFrame(ticks_new, columns=['ask_price', 'ask_volume', 'bid_price', 'bid_volume'], index=index)
+def create_data_frame(ticks):
+    index = []
+    ticks_new = []
+    for tick in ticks:
+        index.append(tick[0])
+        ticks_new.append(tick[2:])
+
+    return pd.DataFrame(ticks_new, columns=['ask_price', 'ask_volume', 'bid_price', 'bid_volume'], index=index)

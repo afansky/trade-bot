@@ -26,7 +26,7 @@ class TradeBot(btcebot.TraderBase):
     def onNewDepth(self, t, pair, asks, bids):
         self.saver.saveDepth(t, pair, asks, bids)
 
-        self.analyzer.analyze(t, pair, asks, bids)
+        self.analyzer.analyze(t, pair)
 
         if pair == "ltc_usd":
             ask_price, ask_amount = asks[0]
