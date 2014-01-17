@@ -37,6 +37,6 @@ def create_data_frame(ticks):
     ticks_new = []
     for tick in ticks:
         index.append(tick[0])
-        ticks_new.append(tick[2:])
+        ticks_new.append(tick[4:])
 
-    return pd.DataFrame(ticks_new, columns=['ask_price', 'ask_volume', 'bid_price', 'bid_volume'], index=index)
+    return pd.DataFrame(ticks_new, columns=['high_price', 'low_price', 'avg_price', 'last_price', 'buy_price', 'sell_price', 'volume', 'current_volume'], index=index)
