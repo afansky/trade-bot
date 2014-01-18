@@ -36,7 +36,7 @@ class TradeBot(btcebot.TraderBase):
 
 def on_bot_error(msg, tracebackText):
     tstr = time.strftime("%Y/%m/%d %H:%M:%S")
-    logger.error("%s - %s\n%s\n%s\n" % (tstr, msg, tracebackText, "-"*80))
+    # logger.error("%s - %s\n%s\n%s\n" % (tstr, msg, tracebackText, "-"*80))
     open("logger-bot-error.log", "a").write(
         "%s - %s\n%s\n%s\n" % (tstr, msg, tracebackText, "-"*80))
 

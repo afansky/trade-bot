@@ -9,12 +9,12 @@ class DataSaver(object):
     def __init__(self, database_path, disable_saver):
         self.enabled = disable_saver is not True
         if self.enabled:
-            logging.info("initializing saver")
+            logger.info("initializing saver")
             self.storage = threading.local()
             self.storage.db = None
             self.database_path = database_path
         else:
-            logging.info("saver is disabled")
+            logger.info("saver is disabled")
 
     def get_db(self):
         if not self.enabled:
