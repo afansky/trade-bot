@@ -12,19 +12,19 @@ class TradeBot(btcebot.TraderBase):
     This "trader" simply logs all of the updates it receives from the bot.
     '''
 
-    def __init__(self, pairs, database_path):
+    def __init__(self, pairs, database_path, disable_saver):
         btcebot.TraderBase.__init__(self, pairs)
         self.trade_history_seen = {}
-        self.saver = saver.DataSaver(database_path)
+        self.saver = saver.DataSaver(database_path, disable_saver)
         self.analyzer = analysis.Analyzer(database_path)
 
     def onExit(self):
-        self.saver.closeDB()
+        self.saver.close_db()
 
     # This overrides the onNewDepth method in the TraderBase class, so the
     # framework will automatically pick it up and send updates to it.
     def onNewDepth(self, t, pair, asks, bids):
-        self.saver.saveDepth(t, pair, asks, bids)
+        self.saver.save_depth(t, pair, asks, bids)
 
         self.analyzer.analyze(t, pair)
 
@@ -41,11 +41,11 @@ class TradeBot(btcebot.TraderBase):
         new_trades = filter(lambda trade: trade.tid not in history, trades)
         if new_trades:
             # print "%s Entering %d new %s trades" % (t, len(new_trades), pair)
-            self.saver.saveTradeHistory(new_trades)
+            self.saver.save_trade_history(new_trades)
             history.update(t.tid for t in new_trades)
 
     def onNewTicker(self, t, pair, ticker):
-        self.saver.saveTick(t, pair, ticker)
+        self.saver.save_tick(t, pair, ticker)
 
 
 def onBotError(msg, tracebackText):
@@ -54,10 +54,10 @@ def onBotError(msg, tracebackText):
     open("logger-bot-error.log", "a").write(
         "%s - %s\n%s\n%s\n" % (tstr, msg, tracebackText, "-"*80))
 
-def run(database_path):
+def run(database_path, disable_saver):
     pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd",
              "ltc_rur", "ltc_eur")
-    botlogger = TradeBot(pairs, database_path)
+    botlogger = TradeBot(pairs, database_path, disable_saver)
     #logger= MarketDataLogger(("btc_usd", "ltc_usd"), database_path)
 
     # Create a bot and add the logger to it.
@@ -92,6 +92,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Simple range trader example.')
     parser.add_argument('--db-path', default='btce.sqlite',
                         help='Path to the logger database.')
+    parser.add_argument('--disable-saver', default=True)
 
     args = parser.parse_args()
-    run(args.db_path)
+    run(args.db_path, args.disable_saver)

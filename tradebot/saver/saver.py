@@ -1,28 +1,51 @@
 import threading
 import btcebot
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class DataSaver(object):
-    def __init__(self, database_path):
-        self.storage = threading.local()
-        self.storage.db = None
-        self.database_path = database_path
+    def __init__(self, database_path, disable_saver):
+        self.enabled = disable_saver is not True
+        if self.enabled:
+            logging.info("initializing saver")
+            self.storage = threading.local()
+            self.storage.db = None
+            self.database_path = database_path
+        else:
+            logging.info("saver is disabled")
 
-    def getDB(self):
+    def get_db(self):
+        if not self.enabled:
+            return
+
         if getattr(self.storage, 'db', None) is None:
             self.storage.db = btcebot.MarketDatabase(self.database_path)
 
         return self.storage.db
 
-    def closeDB(self):
+    def close_db(self):
+        if not self.enabled:
+            return
+
         if self.storage.db is not None:
             self.storage.db.close()
 
-    def saveDepth(self, t, pair, asks, bids):
-        self.getDB().insertDepth(t, pair, asks, bids)
+    def save_depth(self, t, pair, asks, bids):
+        if not self.enabled:
+            return
 
-    def saveTradeHistory(self, new_trades):
-        self.getDB().insertTradeHistory(new_trades)
+        self.get_db().insertDepth(t, pair, asks, bids)
 
-    def saveTick(self, t, pair, tick):
-        self.getDB().insertTick(t, pair, tick)
+    def save_trade_history(self, new_trades):
+        if not self.enabled:
+            return
+
+        self.get_db().insertTradeHistory(new_trades)
+
+    def save_tick(self, t, pair, tick):
+        if not self.enabled:
+            return
+
+        self.get_db().insertTick(t, pair, tick)
