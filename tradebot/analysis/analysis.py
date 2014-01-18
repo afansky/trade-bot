@@ -16,6 +16,11 @@ class Analyzer(object):
 
     def analyze(self, t, pair):
         ticks = self.get_db().retrieveTicks(pair, datetime.date.fromordinal(datetime.date.today().toordinal() - 1), t)
+
+        if len(ticks) == 0:
+            logger.debug("no ticks found, aborting analysis")
+            return
+
         df = create_data_frame(ticks)
         signals = []
         for func in self.indicators:
