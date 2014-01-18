@@ -10,18 +10,18 @@ def moving_average(df, period):
 
 
 def exponential_moving_average(df, period):
-    return pd.ewma(df, span=period)
+    return pd.ewma(df.resample("1Min", fill_method="ffill"), span=period)
 
 
 def double_crossover(df):
     ma5 = exponential_moving_average(df, 5)
     ma35 = exponential_moving_average(df, 35)
 
-    previous_ma5_value = ma5.iat[-2, 0]
-    previous_ma35_value = ma35.iat[-2, 0]
+    previous_ma5_value = ma5.iloc[-2]['last']
+    previous_ma35_value = ma35.iloc[-2]['last']
 
-    current_ma5_value = ma5.iat[-1, 0]
-    current_ma35_value = ma35.iat[-1, 0]
+    current_ma5_value = ma5.iloc[-1]['last']
+    current_ma35_value = ma35.iloc[-1]['last']
 
     if previous_ma5_value < previous_ma35_value and current_ma5_value >= current_ma35_value:
         return signal.BuySignal()

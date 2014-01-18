@@ -2,6 +2,7 @@ import time
 import btcebot
 import saver
 import analysis
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +21,6 @@ class TradeBot(btcebot.TraderBase):
         self.saver.save_depth(t, pair, asks, bids)
 
         self.analyzer.analyze(t, pair)
-
-        if pair == "ltc_usd":
-            ask_price, ask_amount = asks[0]
-            bid_price, bid_amount = bids[0]
-            logger.info("LTC/USD Ask: %s, Bid: %s" % (ask_price, bid_price))
 
     def onNewTradeHistory(self, t, pair, trades):
         history = self.trade_history_seen.setdefault(pair, set())
