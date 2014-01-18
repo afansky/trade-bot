@@ -23,8 +23,10 @@ def double_crossover(df):
     current_ma5_value = ma5.iloc[-1]['last']
     current_ma35_value = ma35.iloc[-1]['last']
 
+    last_price = df.iloc[-1]['last']
+
     if previous_ma5_value < previous_ma35_value and current_ma5_value >= current_ma35_value:
-        return signal.BuySignal()
+        return signal.BuySignal(last_price)
 
     if previous_ma5_value > previous_ma35_value and current_ma5_value <= current_ma35_value:
-        return signal.SellSignal()
+        return signal.SellSignal(last_price)

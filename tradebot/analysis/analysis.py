@@ -28,7 +28,7 @@ class Analyzer(object):
                 signals.append(signal)
 
         for signal in signals:
-            logger.info("Signal detected - %s @ %s" % (signal.message, pair))
+            logger.info("Signal detected - %s @ %s - %s" % (signal.message, pair, signal.last_price))
 
     def get_db(self):
         if self.db is None:
