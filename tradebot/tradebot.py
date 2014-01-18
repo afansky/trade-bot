@@ -1,17 +1,12 @@
 import time
-import btceapi
 import btcebot
 import saver
 import analysis
-import logging
 
 logger = logging.getLogger(__name__)
 
-class TradeBot(btcebot.TraderBase):
-    '''
-    This "trader" simply logs all of the updates it receives from the bot.
-    '''
 
+class TradeBot(btcebot.TraderBase):
     def __init__(self, pairs, database_path, disable_saver):
         btcebot.TraderBase.__init__(self, pairs)
         self.trade_history_seen = {}
@@ -21,8 +16,6 @@ class TradeBot(btcebot.TraderBase):
     def onExit(self):
         self.saver.close_db()
 
-    # This overrides the onNewDepth method in the TraderBase class, so the
-    # framework will automatically pick it up and send updates to it.
     def onNewDepth(self, t, pair, asks, bids):
         self.saver.save_depth(t, pair, asks, bids)
 
@@ -33,14 +26,11 @@ class TradeBot(btcebot.TraderBase):
             bid_price, bid_amount = bids[0]
             logger.info("LTC/USD Ask: %s, Bid: %s" % (ask_price, bid_price))
 
-    # This overrides the onNewTradeHistory method in the TraderBase class, so the
-    # framework will automatically pick it up and send updates to it.
     def onNewTradeHistory(self, t, pair, trades):
         history = self.trade_history_seen.setdefault(pair, set())
 
         new_trades = filter(lambda trade: trade.tid not in history, trades)
         if new_trades:
-            # print "%s Entering %d new %s trades" % (t, len(new_trades), pair)
             self.saver.save_trade_history(new_trades)
             history.update(t.tid for t in new_trades)
 
@@ -48,7 +38,7 @@ class TradeBot(btcebot.TraderBase):
         self.saver.save_tick(t, pair, ticker)
 
 
-def onBotError(msg, tracebackText):
+def on_bot_error(msg, tracebackText):
     tstr = time.strftime("%Y/%m/%d %H:%M:%S")
     logger.error("%s - %s\n%s\n%s\n" % (tstr, msg, tracebackText, "-"*80))
     open("logger-bot-error.log", "a").write(
@@ -65,7 +55,7 @@ def run(database_path, disable_saver):
     bot.addTrader(botlogger)
 
     # Add an error handler so we can print info about any failures
-    bot.addErrorHandler(onBotError)
+    bot.addErrorHandler(on_bot_error)
 
     # The bot will provide the logger with updated information every
     # 60 seconds.
