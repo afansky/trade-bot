@@ -56,6 +56,7 @@ def run(database_path, disable_saver):
     # The bot will provide the logger with updated information every
     # 60 seconds.
     bot.setCollectionInterval(60)
+    bot.tickerInterval = 60
     bot.start()
     logger.info("Running; press Ctrl-C to stop")
 

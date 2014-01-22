@@ -14,7 +14,7 @@ class Analyzer(object):
         self.indicators = [indicator.double_crossover]
 
     def analyze(self, t, pair):
-        ticks = self.get_db().retrieveTicks(pair, datetime.datetime.fromordinal(datetime.datetime.today().toordinal() - 1), t)
+        ticks = self.get_db().retrieve_ticks(pair, datetime.datetime.fromordinal(datetime.datetime.today().toordinal() - 1), t)
 
         if len(ticks) == 0:
             logger.debug("no ticks found, aborting analysis")

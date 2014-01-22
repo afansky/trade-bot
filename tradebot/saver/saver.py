@@ -21,7 +21,7 @@ class DataSaver(object):
             return
 
         if getattr(self.storage, 'db', None) is None:
-            self.storage.db = btcebot.MarketDatabase(self.database_path)
+            self.storage.db = btcebot.MarketDatabase()
 
         return self.storage.db
 
@@ -42,10 +42,10 @@ class DataSaver(object):
         if not self.enabled:
             return
 
-        self.get_db().insertTradeHistory(new_trades)
+        self.get_db().insert_trade_history(new_trades)
 
     def save_tick(self, t, pair, tick):
         if not self.enabled:
             return
 
-        self.get_db().insertTick(t, pair, tick)
+        self.get_db().insert_tick(t, pair, tick)
