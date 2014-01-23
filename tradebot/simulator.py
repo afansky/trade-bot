@@ -15,17 +15,21 @@ class Simulator:
     def simulate(self):
         for pair in self.pairs:
             logger.info("processing pair %s" % pair)
-            timestamps = self.db.retrieve_ticks_timestamps(pair)
+            ticks = self.db.retrieve_ticks(pair, datetime.datetime(2000, 1, 1), datetime.datetime.now())
 
-            total_len = len(timestamps)
+            ticks = analysis.filter_repeating_ticks(ticks)
+
+            total_len = len(ticks)
             logger.info("analyzing %s %s timestamps" % (pair, total_len))
-            count = 0
-            for timestamp in timestamps:
-                count += 1
-                if count % 1000 == 0:
-                    logger.info('done %s percent for %s' % (count * 100 / total_len, pair))
+            for i in range(1, total_len):
+                if i % 1000 == 0:
+                    logger.info('done %s percent for %s' % (i * 100 / total_len, pair))
 
-                self.analyzer.analyze(timestamp['time'], pair)
+                start = 1
+                if i > 1000:
+                    start = i - 1000
+                data = ticks[start:i]
+                self.analyzer.analyze(data, pair)
 
 
 
