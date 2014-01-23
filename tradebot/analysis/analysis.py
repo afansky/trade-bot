@@ -17,14 +17,17 @@ def filter_repeating_ticks(ticks):
             continue
 
         if previous['last'] == t['last']:
+            if previous['time'] != t['time']:
+                previous['time'] = t['time']
             continue
         else:
             result.append(previous)
 
         previous = t
 
-    if len(result) == 0 or previous != result[-1]:
-        result.append(previous)
+    if previous is not None:
+        if len(result) == 0 or previous != result[-1]:
+            result.append(previous)
 
     return result
 
