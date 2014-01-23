@@ -8,13 +8,12 @@ logger = logging.getLogger(__name__)
 
 
 class Analyzer(object):
-    def __init__(self, database_path):
-        self.database_path = database_path
+    def __init__(self):
         self.db = None
         self.indicators = [indicator.double_crossover]
 
     def analyze(self, t, pair):
-        ticks = self.get_db().retrieve_ticks(pair, datetime.datetime.fromordinal(datetime.datetime.today().toordinal() - 1), t)
+        ticks = self.get_db().retrieve_ticks(pair, datetime.datetime.fromordinal(t.toordinal() - 1), t)
 
         if len(ticks) == 0:
             logger.debug("no ticks found, aborting analysis")
@@ -32,7 +31,7 @@ class Analyzer(object):
 
     def get_db(self):
         if self.db is None:
-            self.db = btcebot.MarketDatabase(self.database_path)
+            self.db = btcebot.MarketDatabase()
         return self.db
 
 

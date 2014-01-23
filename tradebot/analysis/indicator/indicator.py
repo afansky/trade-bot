@@ -14,6 +14,11 @@ def exponential_moving_average(df, period):
 
 
 def double_crossover(df):
+    data_size = len(df.index)
+    if data_size < 35:
+        logger.info("skipping iteration, not enough data - %s rows in the data frame" % data_size)
+        return
+
     ma5 = exponential_moving_average(df, 5)
     ma35 = exponential_moving_average(df, 35)
 

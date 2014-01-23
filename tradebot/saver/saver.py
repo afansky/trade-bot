@@ -36,7 +36,7 @@ class DataSaver(object):
         if not self.enabled:
             return
 
-        self.get_db().insertDepth(t, pair, asks, bids)
+        self.get_db().insert_depth(t, pair, asks, bids)
 
     def save_trade_history(self, new_trades):
         if not self.enabled:

@@ -12,7 +12,7 @@ class TradeBot(btcebot.TraderBase):
         btcebot.TraderBase.__init__(self, pairs)
         self.trade_history_seen = {}
         self.saver = saver.DataSaver(database_path, disable_saver)
-        self.analyzer = analysis.Analyzer(database_path)
+        self.analyzer = analysis.Analyzer()
 
     def onExit(self):
         self.saver.close_db()
@@ -82,4 +82,4 @@ if __name__ == '__main__':
     parser.add_argument('--disable-saver', default=True)
 
     args = parser.parse_args()
-    run(args.db_path, args.disable_saver)
+    run(args.db_path, args.disable_saver, args.enable_simulator)
