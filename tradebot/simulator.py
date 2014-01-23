@@ -17,9 +17,19 @@ class Simulator:
             logger.info("processing pair %s" % pair)
             timestamps = self.db.retrieve_ticks_timestamps(pair)
 
-            logger.info("analyzing %s timestamps" % len(timestamps))
+            total_len = len(timestamps)
+            logger.info("analyzing %s %s timestamps" % (pair, total_len))
+            count = 0
             for timestamp in timestamps:
+                count += 1
+                if count % 1000 == 0:
+                    logger.info('done %s percent for %s' % (count * 100 / total_len, pair))
+
                 self.analyzer.analyze(timestamp['time'], pair)
+
+
+
+
 
 if __name__ == '__main__':
     import logging

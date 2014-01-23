@@ -36,15 +36,22 @@ class Analyzer(object):
     def __init__(self):
         self.db = None
         self.indicators = [indicator.double_crossover]
+        self.last_price = None
 
     def analyze(self, t, pair):
         ticks = self.get_db().retrieve_ticks(pair, datetime.datetime.fromordinal(t.toordinal() - 1), t)
 
-        if len(ticks) == 0:
+        ticks = filter_repeating_ticks(ticks)
+
+        if len(ticks) < 35:
             logger.debug("no ticks found, aborting analysis")
+            self.last_price = ticks[-1]['last']
             return
 
-        ticks = filter_repeating_ticks(ticks)
+        last_price = ticks[-1]['last']
+        if self.last_price == last_price:
+            logger.debug("price has not changed since last iteration")
+            return 
 
         df = create_data_frame(ticks)
         signals = []
@@ -55,6 +62,8 @@ class Analyzer(object):
 
         for signal in signals:
             logger.info("Signal detected - %s @ %s - %s" % (signal.message, pair, signal.last_price))
+
+        self.last_price = last_price
 
     def get_db(self):
         if self.db is None:
