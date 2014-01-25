@@ -59,5 +59,4 @@ class Analyzer(object):
 
 
 def create_data_frame(ticks):
-    return pd.DataFrame.from_records(ticks, index='time', columns=['time', 'high', 'low', 'avg', 'last', 'buy', 'sell',
-                                                                   'vol', 'vol_cur'])
+    return pd.DataFrame.from_records(ticks, index='time', columns=['time', 'last'])

@@ -30,3 +30,11 @@ def double_crossover(df):
 
     if previous_ma5_value > previous_ma35_value and current_ma5_value <= current_ma35_value:
         return signal.SellSignal(last_price)
+
+
+def normalize(df):
+    if len(df.index) == 0:
+        return df
+
+    df_norm = df / df.iloc[0]['last']
+    return df_norm
