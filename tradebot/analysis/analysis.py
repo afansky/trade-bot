@@ -35,7 +35,7 @@ def filter_repeating_ticks(ticks):
 class Analyzer(object):
     def __init__(self):
         self.db = None
-        self.indicators = [indicator.double_crossover, indicator.bollinger_bands]
+        self.indicators = [indicator.bollinger_bands]
 
     def analyze(self, ticks, pair):
         if len(ticks) < 35:
