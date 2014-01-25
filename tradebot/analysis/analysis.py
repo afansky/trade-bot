@@ -35,7 +35,7 @@ def filter_repeating_ticks(ticks):
 class Analyzer(object):
     def __init__(self):
         self.db = None
-        self.indicators = [indicator.double_crossover]
+        self.indicators = [indicator.double_crossover, indicator.bollinger_bands]
 
     def analyze(self, ticks, pair):
         if len(ticks) < 35:
@@ -50,7 +50,7 @@ class Analyzer(object):
                 signals.append(signal)
 
         for signal in signals:
-            logger.info("Signal detected - %s @ %s - %s" % (signal.message, pair, signal.last_price))
+            logger.info("Signal from [%s] detected - %s @ %s - %s" % (signal.source, signal.message, pair, signal.last_price))
 
     def get_db(self):
         if self.db is None:
