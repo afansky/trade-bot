@@ -1,6 +1,6 @@
 import unittest
 import datetime
-from portfolio import Portfolio, SellOrder, BuyOrder
+from portfolio import Portfolio, SellOrder, BuyOrder, NoFundsException
 
 
 class TestPortfolioFunctions(unittest.TestCase):
@@ -51,3 +51,32 @@ class TestPortfolioFunctions(unittest.TestCase):
         self.assertEqual(orders[time_1], order_1)
         self.assertEqual(orders[time_2], order_2)
         self.assertEqual(len(portfolio.orders), 0)
+
+    def test_execute_order(self):
+        portfolio = Portfolio({'usd': 100})
+
+        portfolio.execute_order(BuyOrder('ltc_usd'), 25.0)
+
+        self.assertEqual(portfolio.amount_available('ltc'), 4)
+
+    def test_execute_order_no_money(self):
+        portfolio = Portfolio()
+
+        self.assertRaises(NoFundsException, lambda: portfolio.execute_order(BuyOrder('ltc_usd'), 25.0))
+
+    def test_execute_order_no_money_2(self):
+        portfolio = Portfolio({'usd': 100})
+
+        self.assertRaises(NoFundsException, lambda: portfolio.execute_order(SellOrder('ltc_usd'), 25.0))
+
+    def test_execute_order_multiple(self):
+        portfolio = Portfolio({'usd': 100})
+
+        portfolio.execute_order(BuyOrder('ltc_usd'), 25.0)
+        self.assertEqual(portfolio.amount_available('ltc'), 4.0)
+        self.assertEqual(portfolio.amount_available('usd'), 0.0)
+
+        portfolio.execute_order(SellOrder('ltc_usd'), 30.0)
+        self.assertEqual(portfolio.amount_available('usd'), 120.0)
+        self.assertEqual(portfolio.amount_available('ltc'), 0.0)
+

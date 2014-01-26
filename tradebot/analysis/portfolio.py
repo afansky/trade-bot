@@ -34,16 +34,44 @@ class Portfolio(object):
         else:
             self.portfolio[currency] = amount
 
+    def execute_order(self, order, current_price):
+        base, counter = order.pair.split('_')
+        if isinstance(order, BuyOrder):
+            available = self.amount_available(counter)
+            if available > 0:
+                buy_amount = available / current_price
+                self.add_currency(base, buy_amount)
+                self.add_currency(counter, -available)
+            else:
+                raise NoFundsException
+        else:
+            available = self.amount_available(base)
+            if available > 0:
+                sell_amount = available * current_price
+                self.add_currency(counter, sell_amount)
+                self.add_currency(base, -available)
+            else:
+                raise NoFundsException
+
 
 class Order(object):
-    def __init__(self, currency, amount):
-        self.currency = currency
+    def __init__(self, pair, amount=None):
+        self.pair = pair
         self.amount = amount
+
+    def get_type(self):
+        pass
 
 
 class SellOrder(Order):
-    pass
+    def get_type(self):
+        return "sell"
 
 
 class BuyOrder(Order):
+    def get_type(self):
+        return "buy"
+
+
+class NoFundsException(Exception):
     pass

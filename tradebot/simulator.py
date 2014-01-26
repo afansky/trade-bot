@@ -48,12 +48,18 @@ class Simulator:
                 ticks = data[pair][start:i]
 
                 signals = self.analyzer.analyze(ticks, pair)
-                # for signal in signals:
-                #     if isinstance(signal, BuySignal):
-                #         if self.portfolio.amount_available(second_cur):
-                #             self.portfolio.add_order(datetime.datetime.now(), BuyOrder('btc', 5))
-                #             self.portfolio.add_order(datetime.datetime.now() + datetime.timedelta(minutes=5), SellOrder('btc', 5))
+                base, counter = pair.split('_')
+                for signal in signals:
+                    if isinstance(signal, BuySignal):
+                        if self.portfolio.amount_available(counter):
+                            self.portfolio.add_order(datetime.datetime.now(),
+                                                     BuyOrder(pair, self.portfolio.amount_available(counter)))
+                            self.portfolio.add_order(datetime.datetime.now() + datetime.timedelta(minutes=5), SellOrder(pair))
 
+                for order in self.portfolio.get_orders_to_process():
+                    logger.info("processing %s order %s with %s amount" % (order.get_type(), order.pair, order.amount))
+                    current_price = data[pair][i]['last']
+                    self.portfolio.execute_order(order, current_price)
 
 
 
