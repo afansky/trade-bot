@@ -52,10 +52,7 @@ class Analyzer(object):
         for signal in signals:
             logger.info("Signal from [%s] detected - %s @ %s - %s" % (signal.source, signal.message, pair, signal.last_price))
 
-    def get_db(self):
-        if self.db is None:
-            self.db = btcebot.MarketDatabase()
-        return self.db
+        return signals
 
 
 def create_data_frame(ticks):
