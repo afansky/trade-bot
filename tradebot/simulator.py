@@ -23,6 +23,7 @@ class Simulator:
         self.db = database.MarketDatabase()
         self.analyzer = analysis.Analyzer()
         self.portfolio = Portfolio(initial_portfolio)
+        self.last_prices = {}
 
     def simulate(self):
         data = {}
@@ -49,8 +50,11 @@ class Simulator:
 
                 signals = self.analyzer.analyze(ticks, pair)
 
+                base, counter = pair.split('_')
+
+                self.last_prices[pair] = data[pair][i]['last']
+
                 if signals:
-                    base, counter = pair.split('_')
                     for signal in signals:
                         if isinstance(signal, BuySignal):
                             if self.portfolio.amount_available(counter):
@@ -58,12 +62,12 @@ class Simulator:
                                 self.portfolio.add_order(t + datetime.timedelta(minutes=5), SellOrder(pair))
 
                 for order in self.portfolio.get_orders_to_process(t):
-                    current_price = data[pair][i]['last']
                     try:
-                        self.portfolio.execute_order(order, current_price)
+                        order_base, order_counter = order.pair.split('_')
+                        self.portfolio.execute_order(order, self.last_prices[order.pair])
                         logger.info("processed %s order %s @ %s - %s and %s now at portfolio for %s" %
-                                    (order.get_type(), order.pair, current_price, self.portfolio.amount_available(base),
-                                     self.portfolio.amount_available(counter), pair))
+                                    (order.get_type(), order.pair, self.last_prices[order.pair], self.portfolio.amount_available(order_base),
+                                     self.portfolio.amount_available(order_counter), order.pair))
                     except NoFundsException:
                         logger.debug("can't process %s order for %s" % (order.get_type(), pair))
 
@@ -73,7 +77,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 
     # pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd", "ltc_rur", "ltc_eur")
-    pairs = ('ltc_usd',)
-    simulator = Simulator(pairs, {'usd': 1000})
+    pairs = ('btc_usd', 'ltc_usd',)
+    simulator = Simulator(pairs, {'usd': 1000, 'btc': 0, 'ltc': 0})
 
     simulator.simulate()
