@@ -23,7 +23,7 @@ class TestAnalysisFunctions(unittest.TestCase):
 
         self.assertEqual([{'time': 1, 'last': 1}, {'time': 2, 'last': 2}], filter_repeating_ticks(ticks))
 
-    def test_filter_repeating_timestamps_3(self):
+    def test_filter_repeating_timestamps_4(self):
         ticks = [{'time': 1, 'last': 1}, {'time': 1, 'last': 1}, {'time': 1, 'last': 2},
                  {'time': 2, 'last': 2}, {'time': 2, 'last': 2}, {'time': 2, 'last': 3}, {'time': 2, 'last': 3}]
 
