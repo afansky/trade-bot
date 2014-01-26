@@ -27,3 +27,13 @@ class TestSimulatorFunctions(unittest.TestCase):
         timestamps = merge_timestamps(data)
 
         self.assertEqual(timestamps, [1, 3])
+
+    def merge_timestamps_test_order(self):
+        btc_usd = [{'time': 3, 'last': 1}, {'time': 5, 'last': 2}]
+        ltc_usd = [{'time': 1, 'last': 1}, {'time': 2, 'last': 2}, {'time': 4, 'last': 2}]
+
+        data = {'btc_usd': btc_usd, 'ltc_usd': ltc_usd}
+
+        timestamps = merge_timestamps(data)
+
+        self.assertEqual(timestamps, [1, 2, 3, 4, 5])

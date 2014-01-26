@@ -13,6 +13,7 @@ def merge_timestamps(data):
     for val in data.values():
         timestamps = [item['time'] for item in val]
         result = result + list(set(timestamps) - set(result))
+    result.sort()
     return result
 
 
