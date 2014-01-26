@@ -32,8 +32,18 @@ class TestPortfolioFunctions(unittest.TestCase):
 
         orders = portfolio.get_orders_to_process()
         self.assertEqual(len(orders), 1)
-        self.assertEqual(orders.itervalues().next(), order)
+        self.assertEqual(orders[0], order)
         self.assertEqual(len(portfolio.orders), 0)
+
+    def test_order_add_future(self):
+        portfolio = Portfolio()
+        order = SellOrder('usd', 50.0)
+
+        portfolio.add_order(datetime.datetime.now() + datetime.timedelta(minutes=5), order)
+
+        orders = portfolio.get_orders_to_process()
+        self.assertEqual(len(orders), 0)
+        self.assertEqual(len(portfolio.orders), 1)
 
     def test_order_add_multiple(self):
         portfolio = Portfolio()
@@ -48,8 +58,8 @@ class TestPortfolioFunctions(unittest.TestCase):
 
         orders = portfolio.get_orders_to_process()
         self.assertEqual(len(orders), 2)
-        self.assertEqual(orders[time_1], order_1)
-        self.assertEqual(orders[time_2], order_2)
+        self.assertIn(order_1, orders)
+        self.assertIn(order_2, orders)
         self.assertEqual(len(portfolio.orders), 0)
 
     def test_execute_order(self):

@@ -3,7 +3,7 @@ import database
 import datetime
 import analysis
 from analysis.indicator.signal import BuySignal
-from analysis.portfolio import Portfolio, BuyOrder, SellOrder
+from analysis.portfolio import Portfolio, BuyOrder, SellOrder, NoFundsException
 
 logger = logging.getLogger(__name__)
 
@@ -48,21 +48,26 @@ class Simulator:
                 ticks = data[pair][start:i]
 
                 signals = self.analyzer.analyze(ticks, pair)
+
+                if not signals:
+                    continue
+
                 base, counter = pair.split('_')
                 for signal in signals:
                     if isinstance(signal, BuySignal):
                         if self.portfolio.amount_available(counter):
-                            self.portfolio.add_order(datetime.datetime.now(),
-                                                     BuyOrder(pair, self.portfolio.amount_available(counter)))
-                            self.portfolio.add_order(datetime.datetime.now() + datetime.timedelta(minutes=5), SellOrder(pair))
+                            self.portfolio.add_order(t, BuyOrder(pair))
+                            self.portfolio.add_order(t + datetime.timedelta(minutes=5), SellOrder(pair))
 
-                for order in self.portfolio.get_orders_to_process():
-                    logger.info("processing %s order %s with %s amount" % (order.get_type(), order.pair, order.amount))
+                for order in self.portfolio.get_orders_to_process(t):
                     current_price = data[pair][i]['last']
-                    self.portfolio.execute_order(order, current_price)
-
-
-
+                    try:
+                        self.portfolio.execute_order(order, current_price)
+                        logger.info("processed %s order %s - %s and %s now at portfolio for %s" %
+                                    (order.get_type(), order.pair, self.portfolio.amount_available(base),
+                                     self.portfolio.amount_available(counter), pair))
+                    except NoFundsException:
+                        logger.debug("can't process %s order for %s" % (order.get_type(), pair))
 
 
 if __name__ == '__main__':
@@ -71,6 +76,6 @@ if __name__ == '__main__':
 
     # pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd", "ltc_rur", "ltc_eur")
     pairs = ('btc_usd',)
-    simulator = Simulator(pairs)
+    simulator = Simulator(pairs, {'usd': 1000})
 
     simulator.simulate()

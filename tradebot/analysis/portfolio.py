@@ -15,13 +15,12 @@ class Portfolio(object):
     def add_order(self, time, order):
         self.orders[time] = order
 
-    def get_orders_to_process(self):
-        time = datetime.datetime.now()
+    def get_orders_to_process(self, time=datetime.datetime.now()):
         orders = {k: v for k, v in self.orders.iteritems() if k < time}
         for k in orders.keys():
             if k in self.orders:
                 del self.orders[k]
-        return orders
+        return orders.values()
 
     def amount_available(self, currency):
         if currency in self.portfolio:
@@ -64,11 +63,17 @@ class Order(object):
 
 
 class SellOrder(Order):
+    def __init__(self, pair, amount=None):
+        super(SellOrder, self).__init__(pair, amount)
+
     def get_type(self):
         return "sell"
 
 
 class BuyOrder(Order):
+    def __init__(self, pair, amount=None):
+        super(BuyOrder, self).__init__(pair, amount)
+
     def get_type(self):
         return "buy"
 
