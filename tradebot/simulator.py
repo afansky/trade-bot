@@ -35,27 +35,24 @@ class Simulator:
         logger.info("all data loaded")
 
         timestamps = merge_timestamps(data)
+        logger.info("timestamps merged")
 
+        for (i, t) in enumerate(timestamps):
+            for pair in self.pairs:
+                if not t in [tick['time'] for tick in data[pair]]:
+                    continue
 
+                start = 0
+                if i > 1000:
+                    start = i - 1000
+                ticks = data[pair][start:i]
 
-            # total_len = len(ticks)
-            # logger.info("analyzing %s %s timestamps" % (pair, total_len))
-            # first_cur, second_cur = pair.split('_')
-            # for i in range(1, total_len):
-            #     if i % 1000 == 0:
-            #         logger.info('done %s percent for %s' % (i * 100 / total_len, pair))
-            #
-            #     start = 1
-            #     if i > 1000:
-            #         start = i - 1000
-            #     data = ticks[start:i]
-            #
-            #     signals = self.analyzer.analyze(data, pair)
-            #     for signal in signals:
-            #         if isinstance(signal, BuySignal):
-            #             if self.portfolio.amount_available(second_cur):
-            #                 self.portfolio.add_order(datetime.datetime.now(), BuyOrder('btc', 5))
-            #                 self.portfolio.add_order(datetime.datetime.now() + datetime.timedelta(minutes=5), SellOrder('btc', 5))
+                signals = self.analyzer.analyze(ticks, pair)
+                # for signal in signals:
+                #     if isinstance(signal, BuySignal):
+                #         if self.portfolio.amount_available(second_cur):
+                #             self.portfolio.add_order(datetime.datetime.now(), BuyOrder('btc', 5))
+                #             self.portfolio.add_order(datetime.datetime.now() + datetime.timedelta(minutes=5), SellOrder('btc', 5))
 
 
 
@@ -66,7 +63,8 @@ if __name__ == '__main__':
     import logging
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 
-    pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd", "ltc_rur", "ltc_eur")
+    # pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd", "ltc_rur", "ltc_eur")
+    pairs = ('btc_usd',)
     simulator = Simulator(pairs)
 
     simulator.simulate()
