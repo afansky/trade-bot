@@ -49,22 +49,20 @@ class Simulator:
 
                 signals = self.analyzer.analyze(ticks, pair)
 
-                if not signals:
-                    continue
-
-                base, counter = pair.split('_')
-                for signal in signals:
-                    if isinstance(signal, BuySignal):
-                        if self.portfolio.amount_available(counter):
-                            self.portfolio.add_order(t, BuyOrder(pair))
-                            self.portfolio.add_order(t + datetime.timedelta(minutes=5), SellOrder(pair))
+                if signals:
+                    base, counter = pair.split('_')
+                    for signal in signals:
+                        if isinstance(signal, BuySignal):
+                            if self.portfolio.amount_available(counter):
+                                self.portfolio.add_order(t, BuyOrder(pair))
+                                self.portfolio.add_order(t + datetime.timedelta(minutes=5), SellOrder(pair))
 
                 for order in self.portfolio.get_orders_to_process(t):
                     current_price = data[pair][i]['last']
                     try:
                         self.portfolio.execute_order(order, current_price)
-                        logger.info("processed %s order %s - %s and %s now at portfolio for %s" %
-                                    (order.get_type(), order.pair, self.portfolio.amount_available(base),
+                        logger.info("processed %s order %s @ %s - %s and %s now at portfolio for %s" %
+                                    (order.get_type(), order.pair, current_price, self.portfolio.amount_available(base),
                                      self.portfolio.amount_available(counter), pair))
                     except NoFundsException:
                         logger.debug("can't process %s order for %s" % (order.get_type(), pair))
@@ -75,7 +73,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 
     # pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd", "ltc_rur", "ltc_eur")
-    pairs = ('btc_usd',)
+    pairs = ('ltc_usd',)
     simulator = Simulator(pairs, {'usd': 1000})
 
     simulator.simulate()
