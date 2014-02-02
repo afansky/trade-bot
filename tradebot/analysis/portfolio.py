@@ -15,7 +15,9 @@ class Portfolio(object):
     def add_order(self, time, order):
         self.orders[time] = order
 
-    def get_orders_to_process(self, time=datetime.datetime.now()):
+    def get_orders_to_process(self, time=None):
+        if time is None:
+            time = datetime.datetime.now()
         orders = {k: v for k, v in self.orders.iteritems() if k <= time}
         for k in orders.keys():
             if k in self.orders:
