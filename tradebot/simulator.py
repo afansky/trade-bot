@@ -77,7 +77,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 
     # pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd", "ltc_rur", "ltc_eur")
-    pairs = ('btc_usd', 'ltc_usd',)
+    pairs = ('btc_usd',)
     simulator = Simulator(pairs, {'usd': 1000, 'btc': 0, 'ltc': 0})
 
     simulator.simulate()
