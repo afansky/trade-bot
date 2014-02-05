@@ -1,6 +1,6 @@
 import pandas as pd
 import logging
-import signal
+import analysis.analysis
 
 logger = logging.getLogger(__name__)
 
@@ -32,10 +32,10 @@ def double_crossover(df):
     last_price = df.iloc[-1]['last']
 
     if previous_ma5_value < previous_ma35_value and current_ma5_value >= current_ma35_value:
-        return signal.BuySignal(last_price, 'double_crossover')
+        return BuySignal(last_price, 'double_crossover')
 
     if previous_ma5_value > previous_ma35_value and current_ma5_value <= current_ma35_value:
-        return signal.SellSignal(last_price, 'double_crossover')
+        return SellSignal(last_price, 'double_crossover')
 
 
 def normalize(df):
@@ -58,7 +58,7 @@ def bollinger_bands(df):
     last_price = df.iloc[-1]['last']
 
     if bollinger_value <= -2.0 <= bollinger_value_previous:
-        return signal.BuySignal(last_price, 'bollinger_bands')
+        return analysis.BuySignal(last_price, 'bollinger_bands')
 
 
 def rsi(df, period):
