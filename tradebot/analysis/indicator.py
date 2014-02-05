@@ -58,7 +58,7 @@ def bollinger_bands(df):
     last_price = df.iloc[-1]['last']
 
     if bollinger_value <= -2.0 <= bollinger_value_previous:
-        return analysis.BuySignal(last_price, 'bollinger_bands')
+        return BuySignal(last_price, 'bollinger_bands')
 
 
 def rsi(df, period):
