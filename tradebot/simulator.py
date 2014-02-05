@@ -30,7 +30,7 @@ class Simulator:
         for pair in self.pairs:
             logger.info("loading data for %s" % pair)
             ticks = self.db.retrieve_ticks(pair, datetime.datetime(2000, 1, 1), datetime.datetime.now())
-            ticks = analysis.filter_repeating_ticks(ticks)
+            ticks = analysis.analysis.filter_repeating_ticks(ticks)
             data[pair] = ticks
 
         logger.info("all data loaded")
