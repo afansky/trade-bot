@@ -1,6 +1,5 @@
 import datetime
-import indicator
-import btcebot
+import analysis.indicator
 import logging
 import pandas as pd
 
@@ -35,7 +34,7 @@ def filter_repeating_ticks(ticks):
 class Analyzer(object):
     def __init__(self):
         self.db = None
-        self.indicators = [indicator.bollinger_bands]
+        self.indicators = [analysis.indicator.bollinger_bands]
 
     def analyze(self, ticks, pair):
         if len(ticks) < 35:

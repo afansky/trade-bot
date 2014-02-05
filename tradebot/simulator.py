@@ -1,8 +1,8 @@
 import logging
 import database
 import datetime
-import analysis
-from analysis.indicator.signal import BuySignal
+import analysis.analysis
+from analysis.indicator import BuySignal
 from analysis.portfolio import Portfolio, BuyOrder, SellOrder, NoFundsException
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ class Simulator:
     def __init__(self, pairs, initial_portfolio=None):
         self.pairs = pairs
         self.db = database.MarketDatabase()
-        self.analyzer = analysis.Analyzer()
+        self.analyzer = analysis.analysis.Analyzer()
         self.portfolio = Portfolio(initial_portfolio)
         self.last_prices = {}
 

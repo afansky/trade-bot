@@ -1,6 +1,6 @@
 import unittest
 import datetime
-from portfolio import Portfolio, SellOrder, BuyOrder, NoFundsException
+from analysis.portfolio import Portfolio, SellOrder, BuyOrder, NoFundsException
 
 
 class TestPortfolioFunctions(unittest.TestCase):

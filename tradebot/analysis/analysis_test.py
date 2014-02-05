@@ -1,5 +1,5 @@
 import unittest
-from analysis import filter_repeating_ticks
+from analysis.analysis import filter_repeating_ticks
 
 
 class TestAnalysisFunctions(unittest.TestCase):

@@ -18,11 +18,11 @@ class Portfolio(object):
     def get_orders_to_process(self, time=None):
         if time is None:
             time = datetime.datetime.now()
-        orders = {k: v for k, v in self.orders.iteritems() if k <= time}
+        orders = {k: v for k, v in self.orders.items() if k <= time}
         for k in orders.keys():
             if k in self.orders:
                 del self.orders[k]
-        return orders.values()
+        return list(orders.values())
 
     def amount_available(self, currency):
         if currency in self.portfolio:
@@ -39,7 +39,7 @@ class Portfolio(object):
         base, counter = order.pair.split('_')
         if isinstance(order, BuyOrder):
             available = self.amount_available(counter)
-            if available > 0:
+            if available and available > 0:
                 buy_amount = available / current_price
                 self.add_currency(base, buy_amount)
                 self.add_currency(counter, -available)
@@ -47,7 +47,7 @@ class Portfolio(object):
                 raise NoFundsException
         else:
             available = self.amount_available(base)
-            if available > 0:
+            if available and available > 0:
                 sell_amount = available * current_price
                 self.add_currency(counter, sell_amount)
                 self.add_currency(base, -available)

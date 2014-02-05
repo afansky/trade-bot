@@ -1,6 +1,6 @@
 import unittest
-from analysis import create_data_frame
-import indicator as i
+from analysis.analysis import create_data_frame
+import analysis.indicator as i
 import mock
 from pandas.util.testing import assert_frame_equal
 
@@ -13,7 +13,7 @@ class TestIndicatorFunctions(unittest.TestCase):
 
         df = i.normalize(df)
 
-        assert_frame_equal(df, create_data_frame([{'time': 1, 'last': 1}, {'time': 2, 'last': 2}]))
+        assert_frame_equal(df, create_data_frame([{'time': 1, 'last': 1.0}, {'time': 2, 'last': 2.0}]))
 
     def normalize_test_empty(self):
         data = []
