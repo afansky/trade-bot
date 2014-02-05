@@ -34,13 +34,26 @@ class TestIndicatorFunctions(unittest.TestCase):
                                                   {'time': 4, 'last': 0.9}, {'time': 5, 'last': 1.1}]))
 
     def rsi_test(self):
-        data = [{'time': 1, 'last': 10.0}, {'time': 2, 'last': 12.0}, {'time': 3, 'last': 10.0},
-                {'time': 4, 'last': 8.0}, {'time': 5, 'last': 14.0}, {'time': 6, 'last': 10.0}]
+        data = [{'time': 1, 'last': 44.34}, {'time': 2, 'last': 44.09}, {'time': 3, 'last': 44.15},
+                {'time': 4, 'last': 43.61}, {'time': 5, 'last': 44.33}, {'time': 6, 'last': 44.83},
+                {'time': 7, 'last': 45.10}, {'time': 8, 'last': 45.42}, {'time': 9, 'last': 45.84},
+                {'time': 10, 'last': 46.08}, {'time': 11, 'last': 45.89}, {'time': 12, 'last': 46.03},
+                {'time': 13, 'last': 45.61}, {'time': 14, 'last': 46.28}, {'time': 15, 'last': 46.28},
+                {'time': 16, 'last': 46.00}, {'time': 17, 'last': 46.03}, {'time': 18, 'last': 46.41},
+                {'time': 19, 'last': 46.22}, {'time': 20, 'last': 45.64}]
         df = create_data_frame(data)
 
-        rsi_value = i.rsi(df, period=2)
+        rsi_value = i.rsi(df, period=14)
 
-        self.assertEqual(rsi_value.iloc[-1], 60)
+        result = [{'time': 1, 'last': None}, {'time': 2, 'last': None}, {'time': 3, 'last': None},
+                  {'time': 4, 'last': None}, {'time': 5, 'last': None}, {'time': 6, 'last': None},
+                  {'time': 7, 'last': None}, {'time': 8, 'last': None}, {'time': 9, 'last': None},
+                  {'time': 10, 'last': None}, {'time': 11, 'last': None}, {'time': 12, 'last': None},
+                  {'time': 13, 'last': None}, {'time': 14, 'last': None}, {'time': 15, 'last': 70.46416},
+                  {'time': 16, 'last': 70.02096}, {'time': 17, 'last': 69.83122}, {'time': 18, 'last': 80.56769},
+                  {'time': 19, 'last': 73.33333}, {'time': 20, 'last': 59.80630}]
+        result_df = create_data_frame(result)
+        assert_frame_equal(rsi_value, result_df)
 
     def stoch_rsi_test(self):
         data = [{'time': 1, 'last': 54.09}, {'time': 2, 'last': 59.90}, {'time': 3, 'last': 58.20},

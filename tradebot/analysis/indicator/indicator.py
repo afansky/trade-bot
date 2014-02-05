@@ -57,23 +57,23 @@ def bollinger_bands(df):
 
     last_price = df.iloc[-1]['last']
 
-    if bollinger_value <= -2.0 and bollinger_value_previous >= -2.0:
+    if bollinger_value <= -2.0 <= bollinger_value_previous:
         return signal.BuySignal(last_price, 'bollinger_bands')
 
 
 def rsi(df, period):
-    delta = df['last'].diff()
+    delta = df.diff()
 
     delta_up = delta.copy()
     delta_down = delta.copy()
     delta_up[delta_up < 0] = 0
     delta_down[delta_down > 0] = 0
 
-    rolling_delta_up = pd.rolling_mean(delta_up, period)
-    rolling_delta_down = pd.rolling_mean(delta_down, period).abs()
+    average_gain = pd.rolling_mean(delta_up, period)
+    average_loss = pd.rolling_mean(delta_down, period).abs()
 
-    rsi_value = rolling_delta_up / rolling_delta_down
-    return 100.0 - 100.0 / (1.0 + rsi_value)
+    rs_value = average_gain / average_loss
+    return 100.0 - 100.0 / (1.0 + rs_value)
 
 
 def stoch_rsi(df, period):
