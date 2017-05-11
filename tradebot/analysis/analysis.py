@@ -1,7 +1,7 @@
 import datetime
-import analysis.indicator
 import logging
 import pandas as pd
+from analysis import indicator
 
 logger = logging.getLogger(__name__)
 
@@ -34,19 +34,17 @@ def filter_repeating_ticks(ticks):
 class Analyzer(object):
     def __init__(self):
         self.db = None
-        self.indicators = [analysis.indicator.bollinger_bands]
+        self.indicators = [indicator.bollinger_bands]
 
-    def analyze(self, ticks, pair):
-        if len(ticks) < 35:
-            logger.debug("not enough data, aborting analysis")
-            return
-
-        df = create_data_frame(ticks)
+    def analyze(self, df, pair):
         signals = []
         for func in self.indicators:
             signal = func(df)
             if signal is not None:
                 signals.append(signal)
+
+        if not signals:
+            logger.info("No signals found")
 
         for signal in signals:
             logger.info("Signal from [%s] detected - %s @ %s - %s" % (signal.source, signal.message, pair, signal.last_price))

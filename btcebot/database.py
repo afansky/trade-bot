@@ -2,6 +2,7 @@
 
 import decimal
 from pymongo import MongoClient
+import csv
 
 
 # Add support for conversion to/from decimal
@@ -51,3 +52,5 @@ class MarketDatabase(object):
 
     def retrieve_depth(self, start_date, end_date, pair):
         pass
+
+

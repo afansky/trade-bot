@@ -1,6 +1,6 @@
 import pandas as pd
 import logging
-import analysis.analysis
+import analysis
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ def bollinger_bands(df):
     std_20 = standard_deviation(df, 20)
     ma_20 = moving_average(df, 20)
 
-    bollinger = (df - ma_20) / std_20
+    bollinger = (df[20:] - ma_20[20:]) / std_20[20:]
 
     bollinger_value_previous = bollinger.iloc[-2]['last']
     bollinger_value = bollinger.iloc[-1]['last']

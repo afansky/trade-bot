@@ -1,6 +1,6 @@
 import unittest
-from analysis.analysis import create_data_frame
 import analysis.indicator as i
+from analysis.analysis import create_data_frame
 import mock
 from pandas.util.testing import assert_frame_equal
 
