@@ -34,18 +34,17 @@ def filter_repeating_ticks(ticks):
 class Analyzer(object):
     def __init__(self):
         self.db = None
-        self.indicators = [indicator.bollinger_bands]
+        self.indicators = [indicator.rsi]
 
-    def analyze(self, df, pair):
+    def analyze(self, df, pair, time):
         signals = []
         for func in self.indicators:
-            signal = func(df)
-            if signal is not None:
-                signals.append(signal)
+            value = func(df, time)
+            print('%s: got bollinger value: %f' % (time, value))
 
-        if not signals:
-            logger.info("No signals found")
-
+        # if not signals:
+        #     logger.info("No signals found")
+        #
         for signal in signals:
             logger.info("Signal from [%s] detected - %s @ %s - %s" % (signal.source, signal.message, pair, signal.last_price))
 
