@@ -1,0 +1,167 @@
+<html>
+<head>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script src="http://code.highcharts.com/stock/highstock.js"></script>
+    <script src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script src="/static/chart-theme.js"></script>
+    <title>Dashboard</title>
+</head>
+<body>
+<div id="my-chart" style="height: 100%"></div>
+<script type="text/javascript">
+    function afterSetExtremes(e) {
+
+        var chart = Highcharts.charts[0];
+
+        chart.showLoading('Loading data from server...');
+        $.getJSON('http://localhost:8000/dashboard/series/?start=' + Math.round(e.min) +
+            '&end=' + Math.round(e.max), function (data) {
+
+            chart.series[0].setData(data);
+            chart.hideLoading();
+        });
+    }
+
+    $.getJSON('http://localhost:8000/dashboard/series/', function (data) {
+
+        // split the data set into ohlc and volume
+        var ohlc = [],
+            volume = [],
+            dataLength = data.length,
+            // set the allowed units for data grouping
+
+            i = 0;
+
+        for (i; i < dataLength; i += 1) {
+            ohlc.push([
+                data[i][0], // the date
+                data[i][1], // open
+                data[i][2], // high
+                data[i][3], // low
+                data[i][4] // close
+            ]);
+
+            volume.push([
+                data[i][0], // the date
+                data[i][5] // the volume
+            ]);
+        }
+
+        var oldColor;
+        // create the chart
+        $('#my-chart').highcharts('StockChart', {
+
+            plotOptions: {
+                series: {
+                    dataGrouping: {
+                        enabled: false
+                    },
+                    allowPointSelect: false,
+                    states: {
+                        select: {
+                            color: 'yellow',
+                        }
+                    },
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function () {
+                                if (this.selected) {
+                                    this.select(false)
+                                } else {
+                                    this.select(true, true);
+                                }
+                            },
+                            select: function() {
+                                var index = this.series.data.indexOf(this);
+                                for (i = index - 10; i < index; i++) {
+                                    this.series.data[i].update({
+                                        color: 'blue',
+                                        oldColor: this.series.data[i].color
+                                    });
+                                }
+                                return true;
+                            },
+                            unselect: function() {
+                                var index = this.series.data.indexOf(this);
+                                for (i = index - 10; i < index; i++) {
+                                    this.series.data[i].update({
+                                        color: this.series.data[i].oldColor
+                                    });
+                                }
+                                return true;
+                            }
+                        }
+                    },
+
+                },
+                candlestick: {
+                    color: 'red',
+                    upColor: 'green'
+                }
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return "open: " + this.points[0].point.open + ' close: ' + this.points[0].point.close + ' high: ' + this.points[0].point.high + ' low:' + this.points[0].point.low;
+                }
+            },
+
+            rangeSelector: {
+                selected: 1
+            },
+
+            title: {
+                text: 'AAPL Stock Price'
+            },
+
+            series: [{
+                type: 'candlestick',
+                name: 'AAPL Stock Price',
+                data: ohlc,
+            },
+                {
+                    type: 'column',
+                    name: 'Volume',
+                    data: volume,
+                    yAxis: 1,
+                }],
+
+            xAxis: {
+                events: {
+                    afterSetExtremes: afterSetExtremes
+                }
+            },
+
+            yAxis: [{
+                labels: {
+                    align: 'right',
+                    x: -3
+                },
+                title: {
+                    text: 'OHLC'
+                },
+                height: '60%',
+                lineWidth: 2
+            }, {
+                labels: {
+                    align: 'right',
+                    x: -3
+                },
+                title: {
+                    text: 'Volume'
+                },
+                top: '65%',
+                height: '35%',
+                offset: 0,
+                lineWidth: 2
+            }],
+
+        });
+    });
+</script>
+</body>
+</html>
