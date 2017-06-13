@@ -4,6 +4,10 @@
     float: left;
 }
 
+#my-chart .highcharts-point {
+    stroke-opacity: 0.5;
+}
+
 #sidebar {
     width: 20%;
     float: left;
