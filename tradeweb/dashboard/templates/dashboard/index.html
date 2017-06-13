@@ -6,162 +6,219 @@
             crossorigin="anonymous"></script>
     <script src="http://code.highcharts.com/stock/highstock.js"></script>
     <script src="http://code.highcharts.com/highcharts-more.js"></script>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/darkly/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-S7YMK1xjUjSpEnF4P8hPUcgjXYLZKK3fQW1j5ObLSl787II9p8RO9XUGehRmKsxd" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
     <script src="/static/chart-theme.js"></script>
+    <link rel="stylesheet" href="/static/styles/styles.css">
+
     <title>Dashboard</title>
 </head>
 <body>
-<div id="my-chart" style="height: 100%"></div>
+<div id="main-layout" style="width: 100%; height: 100%">
+    <div id="my-chart"></div>
+    <div id="sidebar">
+        <table id="point-table" class="table">
+            <thead>
+            <tr>
+                <th>Time</th>
+                <th>Last</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <script type="text/javascript">
     function afterSetExtremes(e) {
 
         var chart = Highcharts.charts[0];
 
         chart.showLoading('Loading data from server...');
-        $.getJSON('http://localhost:8000/dashboard/series/?start=' + Math.round(e.min) +
-            '&end=' + Math.round(e.max), function (data) {
-
+        $.post("http://localhost:8000/dashboard/series/", {
+            start: Math.round(e.min),
+            end: Math.round(e.max)
+        }, function (data, textStatus) {
             chart.series[0].setData(data);
             chart.hideLoading();
+            updateSelectedPoints();
+        }, "json");
+    }
+
+    function updateSelectedPoints() {
+        $.getJSON('http://localhost:8000/dashboard/points/', function (data) {
+            $("#point-table").find("> tbody").empty();
+            let chart = Highcharts.charts[0];
+
+            for (let j = 0; j < chart.getSelectedPoints().length; j++) {
+                chart.getSelectedPoints()[j].select(false)
+            }
+            for (let i = 0; i < data.length; i++) {
+                let point = data[i];
+                $('#point-table').find('tbody').append('<tr><td>' + point.time + '</td><td>' + point.price + '</td></tr>>')
+                if (typeof chart !== 'undefined') {
+                    for (let j = 0; j < chart.series[0].data.length; j++) {
+                        if (typeof chart.series[0].data[j] !== 'undefined' && chart.series[0].data[j].x === point.time) {
+                            chart.series[0].data[j].select(true, true);
+                        }
+                    }
+                }
+            }
         });
     }
 
-    $.getJSON('http://localhost:8000/dashboard/series/', function (data) {
+    $.getJSON('http://localhost:8000/dashboard/init/', function (data) {
+        var start = data.start;
+        var end = data.end;
 
-        // split the data set into ohlc and volume
-        var ohlc = [],
-            volume = [],
-            dataLength = data.length,
-            // set the allowed units for data grouping
+        $.post("http://localhost:8000/dashboard/series/", {
+            start: start,
+            end: end
+        }, function (data, textStatus) {
 
-            i = 0;
+            // split the data set into ohlc and volume
+            var ohlc = [],
+                volume = [],
+                dataLength = data.length,
+                // set the allowed units for data grouping
 
-        for (i; i < dataLength; i += 1) {
-            ohlc.push([
-                data[i][0], // the date
-                data[i][1], // open
-                data[i][2], // high
-                data[i][3], // low
-                data[i][4] // close
-            ]);
+                i = 0;
 
-            volume.push([
-                data[i][0], // the date
-                data[i][5] // the volume
-            ]);
-        }
+            for (i; i < dataLength; i += 1) {
+                ohlc.push([
+                    data[i][0], // the date
+                    data[i][1], // open
+                    data[i][2], // high
+                    data[i][3], // low
+                    data[i][4] // close
+                ]);
 
-        var oldColor;
-        // create the chart
-        $('#my-chart').highcharts('StockChart', {
+                volume.push([
+                    data[i][0], // the date
+                    data[i][5] // the volume
+                ]);
+            }
 
-            plotOptions: {
-                series: {
-                    dataGrouping: {
-                        enabled: false
-                    },
-                    allowPointSelect: false,
-                    states: {
-                        select: {
-                            color: 'yellow',
-                        }
-                    },
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function () {
-                                if (this.selected) {
-                                    this.select(false)
-                                } else {
-                                    this.select(true, true);
-                                }
-                            },
-                            select: function() {
-                                var index = this.series.data.indexOf(this);
-                                for (i = index - 10; i < index; i++) {
-                                    this.series.data[i].update({
-                                        color: 'blue',
-                                        oldColor: this.series.data[i].color
-                                    });
-                                }
-                                return true;
-                            },
-                            unselect: function() {
-                                var index = this.series.data.indexOf(this);
-                                for (i = index - 10; i < index; i++) {
-                                    this.series.data[i].update({
-                                        color: this.series.data[i].oldColor
-                                    });
-                                }
-                                return true;
+            var oldColor;
+            // create the chart
+            $('#my-chart').highcharts('StockChart', {
+
+                plotOptions: {
+                    series: {
+                        dataGrouping: {
+                            enabled: false
+                        },
+                        allowPointSelect: false,
+                        states: {
+                            select: {
+                                color: 'yellow',
                             }
-                        }
+                        },
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function () {
+                                    if (this.selected) {
+                                        this.select(false);
+                                        $.post('http://localhost:8000/dashboard/removePoint/', {'time': this.x},
+                                            function (data, message) {
+                                                updateSelectedPoints();
+                                            }, "json");
+                                    } else {
+                                        this.select(true, true);
+                                        $.post('http://localhost:8000/dashboard/addPoint/', {'time': this.x},
+                                            function (data, message) {
+                                                updateSelectedPoints();
+                                            }, "json");
+                                    }
+                                }
+                            }
+                        },
+
                     },
-
+                    candlestick: {
+                        color: 'red',
+                        upColor: 'green'
+                    }
                 },
-                candlestick: {
-                    color: 'red',
-                    upColor: 'green'
-                }
-            },
 
-            tooltip: {
-                formatter: function () {
-                    return "open: " + this.points[0].point.open + ' close: ' + this.points[0].point.close + ' high: ' + this.points[0].point.high + ' low:' + this.points[0].point.low;
-                }
-            },
+                rangeSelector: {
+                    inputEnabled: true,
+                    selected: 1
+                },
 
-            rangeSelector: {
-                selected: 1
-            },
+                navigator: {
+                    adaptToUpdatedData: false,
+                    series: {
+                        data: ohlc
+                    }
+                },
 
-            title: {
-                text: 'AAPL Stock Price'
-            },
+                title: {
+                    text: 'AAPL Stock Price'
+                },
 
-            series: [{
-                type: 'candlestick',
-                name: 'AAPL Stock Price',
-                data: ohlc,
-            },
-                {
-                    type: 'column',
-                    name: 'Volume',
-                    data: volume,
-                    yAxis: 1,
+                series: [
+                    {
+                        type: 'candlestick',
+                        name: 'AAPL Stock Price',
+                        data: ohlc,
+                    },
+                    {
+                        type: 'column',
+                        name: 'Volume',
+                        data: volume,
+                        yAxis: 1,
+                    }
+                ],
+
+                xAxis: {
+                    min: start,
+                    end: end,
+                    events: {
+                        afterSetExtremes: afterSetExtremes
+                    }
+                },
+
+                yAxis: [{
+                    labels: {
+                        align: 'right',
+                        x: -3
+                    },
+                    title: {
+                        text: 'OHLC'
+                    },
+                    height: '60%',
+                    lineWidth: 2
+                }, {
+                    labels: {
+                        align: 'right',
+                        x: -3
+                    },
+                    title: {
+                        text: 'Volume'
+                    },
+                    top: '65%',
+                    height: '35%',
+                    offset: 0,
+                    lineWidth: 2
                 }],
 
-            xAxis: {
-                events: {
-                    afterSetExtremes: afterSetExtremes
-                }
-            },
+            });
+        }, "json");
 
-            yAxis: [{
-                labels: {
-                    align: 'right',
-                    x: -3
-                },
-                title: {
-                    text: 'OHLC'
-                },
-                height: '60%',
-                lineWidth: 2
-            }, {
-                labels: {
-                    align: 'right',
-                    x: -3
-                },
-                title: {
-                    text: 'Volume'
-                },
-                top: '65%',
-                height: '35%',
-                offset: 0,
-                lineWidth: 2
-            }],
-
-        });
+        updateSelectedPoints();
     });
+
+
 </script>
 </body>
 </html>

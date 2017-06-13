@@ -100,6 +100,33 @@ class CsvDatabase(object):
                 continue
             db.btcebtcusd.insert_one({'time': i, 'last': row['last'], 'volume': row['volume']})
 
+    def import_resampled_data(self, period):
+        print('Loading CSV file...')
+        df = pd.read_csv('../../data/btceusd_last.csv', header=None, sep=",", names=['time', 'last', 'volume'],
+                         parse_dates=True, date_parser=dateparse, index_col=0)
+        print('Resampling data...')
+        df['last'] = pd.to_numeric(df['last']).bfill()
+        df['volume'] = pd.to_numeric(df['volume']).bfill()
+        price = df.resample(period, how={'last': 'ohlc'})
+        volume = df.resample(period, how={'volume': 'sum'})
+        volume.columns = pd.MultiIndex.from_tuples([('volume', 'sum')])
+        df = pd.concat([price, volume], axis=1)
+
+        print('Uploading to the database...')
+        client = MongoClient("mongodb://localhost:27017")
+        db = client.bitcoinbot
+        counter = 0
+
+        for i, row in df.iterrows():
+            counter = counter + 1
+            if counter % 20000 == 0:
+                print('Processing tick number %s', counter)
+            db.btcebtcusd_1h.insert_one(
+                {'time': i, 'open': row['last']['open'], 'high': row['last']['high'], 'low': row['last']['low'],
+                 'close': row['last']['close'], 'volume': row['volume']['sum']})
+
+        print('Done.')
+
 
     def load_samples(self):
         df = pd.read_csv('../../data/last_price_2.csv', header=None, sep=",", names=['time', 'last', 'volume'],

@@ -31,7 +31,7 @@ def index(request):
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
-def series(request, format=None):
+def series_old(request, format=None):
     """
     A view that returns the count of active users in JSON.
     """
@@ -54,6 +54,76 @@ def series(request, format=None):
 
     response = []
     for i, row in df.iterrows():
-        response.append([int(time.mktime(i.timetuple())) * 1000, row['last']['open'], row['last']['high'], row['last']['low'], row['last']['close'], row['volume']['sum']])
+        response.append(
+            [int(time.mktime(i.timetuple())) * 1000, row['last']['open'], row['last']['high'], row['last']['low'],
+             row['last']['close'], row['volume']['sum']])
 
     return Response(response)
+
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+def series(request):
+    """
+    A view that returns the count of active users in JSON.
+    """
+
+    start = datetime.datetime.fromtimestamp(int(request.POST['start']) / 1000)
+    end = datetime.datetime.fromtimestamp(int(request.POST['end']) / 1000)
+
+    client = MongoClient("mongodb://localhost:27017")
+    db = client.bitcoinbot
+    ticks = db.btcebtcusd_1h.find({'time': {'$lt': end, '$gte': start}}).sort([('_id', 1)])
+
+    df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
+    df = df.set_index(['time'])
+    df = df.bfill()
+
+    response = []
+    for i, row in df.iterrows():
+        response.append(
+            [int(time.mktime(i.timetuple())) * 1000, row['open'], row['high'], row['low'], row['close'], row['volume']])
+
+    return Response(response)
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def init(request):
+    start = datetime.datetime.now() - datetime.timedelta(days=45)
+    end = datetime.datetime.now()
+    response = {'start': time.mktime(start.timetuple()) * 1000, 'end': time.mktime(end.timetuple()) * 1000}
+    return Response(response)
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def points(request):
+    client = MongoClient("mongodb://localhost:27017")
+    db = client.bitcoinbot
+    ticks = db.btcebtcusd_1h_points.find({}, {'time': 1, 'price': 1, '_id': 0})
+    tick_list = list(ticks)
+    for tick in tick_list:
+        tick['time'] = time.mktime(tick['time'].timetuple()) * 1000
+    return Response(tick_list)
+
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+def add_point(request):
+    point_time = datetime.datetime.fromtimestamp(int(request.POST['time']) / 1000)
+    client = MongoClient("mongodb://localhost:27017")
+    db = client.bitcoinbot
+    tick = db.btcebtcusd_1h.find_one({'time': point_time})
+    db.btcebtcusd_1h_points.insert_one({'time': point_time, 'price': tick['close']})
+    return Response(True)
+
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+def remove_point(request):
+    point_time = datetime.datetime.fromtimestamp(int(request.POST['time']) / 1000)
+    client = MongoClient("mongodb://localhost:27017")
+    db = client.bitcoinbot
+    db.btcebtcusd_1h_points.remove({'time': point_time})
+    return Response(True)
