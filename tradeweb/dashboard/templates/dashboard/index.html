@@ -21,23 +21,44 @@
     <title>Dashboard</title>
 </head>
 <body>
-<div id="main-layout" style="width: 100%; height: 100%">
-    <div id="my-chart"></div>
-    <div id="sidebar">
-        <table id="point-table" class="table table-striped table-hover ">
-            <thead>
-            <tr>
-                <th>Time</th>
-                <th>Last</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-9">
+            <div id="my-chart"></div>
+        </div>
+        <div class="col-md-3">
+            <div id="sidebar">
+                <div id="sidebar-options">
+                    <label class="radio-inline"><input type="radio" name="points-type" checked value="positive">Positive</label>
+                    <label class="radio-inline"><input type="radio" name="points-type" value="negative">Negative</label>
+                </div>
+                <table id="point-table" class="table table-striped table-hover ">
+                    <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Last</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 <script type="text/javascript">
+    function formatDate(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
+    }
+
     function afterSetExtremes(e) {
 
         var chart = Highcharts.charts[0];
@@ -47,7 +68,78 @@
             start: Math.round(e.min),
             end: Math.round(e.max)
         }, function (data, textStatus) {
-            chart.series[0].setData(data);
+            // split the data set into ohlc and volume
+            var ohlc = [],
+                volume = [],
+                ma_7 = [],
+                ma_25 = [],
+                rsi = [],
+                bb_up = [],
+                bb_down = [],
+                dataLength = data.length,
+                // set the allowed units for data grouping
+
+                i = 0;
+
+            for (i; i < dataLength; i += 1) {
+                let color = '';
+                let type = data[i][11];
+                if (type === 'positive') {
+                    color = 'yellow';
+                } else if (type === 'negative') {
+                    color = 'blue';
+                }
+                ohlc.push(
+                    {
+                        x: data[i][0],
+                        open: data[i][1],
+                        high: data[i][2],
+                        low: data[i][3],
+                        close: data[i][4],
+                        name: '',
+                        color: color,
+                        type: type
+                    }
+                );
+
+                volume.push([
+                    data[i][0],
+                    data[i][5]
+                ]);
+
+                ma_7.push([
+                    data[i][0],
+                    data[i][6]
+                ]);
+
+                ma_25.push([
+                    data[i][0],
+                    data[i][7]
+                ]);
+
+                rsi.push([
+                    data[i][0],
+                    data[i][8]
+                ]);
+
+                bb_up.push([
+                    data[i][0],
+                    data[i][9]
+                ]);
+
+                bb_down.push([
+                    data[i][0],
+                    data[i][10]
+                ]);
+            }
+
+            chart.series[0].setData(ohlc);
+            chart.series[1].setData(ma_7);
+            chart.series[2].setData(volume);
+            chart.series[3].setData(ma_25);
+            chart.series[4].setData(rsi);
+            chart.series[5].setData(bb_up);
+            chart.series[6].setData(bb_down);
             chart.hideLoading();
             updateSelectedPoints();
         }, "json");
@@ -58,26 +150,39 @@
             $("#point-table").find("> tbody").empty();
             let chart = Highcharts.charts[0];
 
-            for (let j = 0; j < chart.getSelectedPoints().length; j++) {
-                chart.getSelectedPoints()[j].select(false)
-            }
             for (let i = 0; i < data.length; i++) {
                 let point = data[i];
-                $('#point-table').find('tbody').append('<tr><td>' + point.time + '</td><td>' + point.price + '</td></tr>>')
-                if (typeof chart !== 'undefined') {
-                    for (let j = 0; j < chart.series[0].data.length; j++) {
-                        if (typeof chart.series[0].data[j] !== 'undefined' && chart.series[0].data[j].x === point.time) {
-                            chart.series[0].data[j].select(true, true);
-                        }
-                    }
-                }
+                let date = new Date(point.time);
+
+                let s = $('<tr><td>' + formatDate(date) + '</td><td>' + point.price + '</td></tr>');
+                s.click(function () {
+                    let range = 3 * 24 * 3600 * 1000;
+                    chart.xAxis[0].setExtremes(point.time - range, point.time + range);
+                });
+                $('#point-table').find('tbody').append(s);
+
             }
         });
+    }
+
+    function getTypeColor(type) {
+        let color = '';
+        if (type === 'positive') {
+            color = 'yellow';
+        } else if (type === 'negative') {
+            color = 'blue';
+        }
+        return color;
     }
 
     $.getJSON('http://localhost:8000/dashboard/init/', function (data) {
         var start = data.start;
         var end = data.end;
+
+        var pointsMode = 'positive';
+        $('input[type=radio][name=points-type]').change(function () {
+            pointsMode = this.value;
+        });
 
         $.post("http://localhost:8000/dashboard/series/", {
             start: start,
@@ -87,27 +192,71 @@
             // split the data set into ohlc and volume
             var ohlc = [],
                 volume = [],
+                ma_7 = [],
+                ma_25 = [],
+                rsi = [],
+                navigator = [],
+                bb_up = [],
+                bb_down = [],
                 dataLength = data.length,
                 // set the allowed units for data grouping
 
                 i = 0;
 
             for (i; i < dataLength; i += 1) {
-                ohlc.push([
-                    data[i][0], // the date
-                    data[i][1], // open
-                    data[i][2], // high
-                    data[i][3], // low
-                    data[i][4] // close
+                navigator.push([
+                    data[i][0],
+                    data[i][4]
                 ]);
+
+                let color = '';
+                let type = data[i][11];
+                color = getTypeColor(type, color);
+
+                ohlc.push(
+                    {
+                        x: data[i][0],
+                        open: data[i][1],
+                        high: data[i][2],
+                        low: data[i][3],
+                        close: data[i][4],
+                        name: '',
+                        color: color,
+                        type: type
+                    }
+                );
 
                 volume.push([
                     data[i][0], // the date
                     data[i][5] // the volume
                 ]);
+
+                ma_7.push(
+                    data[i][0],
+                    data[i][6]
+                );
+
+                ma_25.push([
+                    data[i][0],
+                    data[i][7]
+                ]);
+
+                rsi.push([
+                    data[i][0],
+                    data[i][8]
+                ]);
+
+                bb_up.push([
+                    data[i][0],
+                    data[i][9]
+                ]);
+
+                bb_down.push([
+                    data[i][0],
+                    data[i][10]
+                ]);
             }
 
-            var oldColor;
             // create the chart
             $('#my-chart').highcharts('StockChart', {
 
@@ -119,67 +268,135 @@
                         },
                         allowPointSelect: false,
                         states: {
-                            select: {
-                                color: 'yellow',
+                            hover: {
+                                enabled: false
                             }
                         },
+                    },
+                    candlestick: {
+                        color: '#C60606',
+                        upColor: '#00B909'
+                    },
+                    line: {
+                        marker: {
+                            enabled: false,
+                            states: {
+                                hover: {
+                                    enabled: false
+                                },
+                                click: {
+                                    enabled: false
+                                }
+                            }
+                        }
+                    }
+                },
+
+                rangeSelector: {
+                    inputEnabled: true,
+                },
+
+                navigator: {
+                    adaptToUpdatedData: false,
+                    series: {
+                        data: navigator
+                    },
+                    xAxis: {
+                        min: start,
+                        max: end
+                    }
+                },
+
+                title: {
+                    text: 'BTC-E BTC/USD'
+                },
+
+                series: [
+                    {
+                        type: 'candlestick',
+                        name: 'BTC/USD BTC-E',
+                        data: ohlc,
+                        zIndex: 1000,
                         cursor: 'pointer',
                         point: {
                             events: {
                                 click: function () {
-                                    if (this.selected) {
-                                        this.select(false);
-                                        $.post('http://localhost:8000/dashboard/removePoint/', {'time': this.x},
+                                    if (this.series.type !== 'candlestick') {
+                                        return;
+                                    }
+
+                                    if (this.type === 'unselected') {
+                                        let point = this;
+                                        this.type = pointsMode;
+                                        $.post('http://localhost:8000/dashboard/addPoint/', {
+                                                'time': this.x,
+                                                'type': this.type
+                                            },
                                             function (data, message) {
+                                                if (data === true) {
+                                                    point.update({color: getTypeColor(point.type)});
+                                                }
                                                 updateSelectedPoints();
                                             }, "json");
                                     } else {
-                                        this.select(true, true);
-                                        $.post('http://localhost:8000/dashboard/addPoint/', {'time': this.x},
+                                        let point = this;
+                                        this.type = 'unselected';
+                                        $.post('http://localhost:8000/dashboard/removePoint/', {
+                                                'time': this.x,
+                                                'type': this.type
+                                            },
                                             function (data, message) {
+                                                if (data === true) {
+                                                    point.update({color: getTypeColor(point.type)});
+                                                }
                                                 updateSelectedPoints();
                                             }, "json");
                                     }
                                 }
                             }
                         },
-
                     },
-                    candlestick: {
-                        color: '#C60606',
-                        upColor: '#00B909'
-                    }
-                },
-
-                rangeSelector: {
-                    inputEnabled: true,
-                    selected: 1
-                },
-
-                navigator: {
-                    adaptToUpdatedData: false,
-                    series: {
-                        data: ohlc
-                    }
-                },
-
-                title: {
-                    text: 'AAPL Stock Price'
-                },
-
-                series: [
                     {
-                        type: 'candlestick',
-                        name: 'AAPL Stock Price',
-                        data: ohlc,
+                        name: 'MA7',
+                        data: ma_7,
+                        zIndex: 5
                     },
                     {
                         type: 'column',
                         name: 'Volume',
                         data: volume,
                         yAxis: 1,
-                    }
+                    },
+                    {
+                        name: 'MA25',
+                        data: ma_25,
+                        zIndex: 4
+                    },
+                    {
+                        type: 'line',
+                        name: 'RSI',
+                        data: rsi,
+                        yAxis: 2,
+                    },
+                    {
+                        type: 'line',
+                        name: 'BB Up',
+                        data: bb_up,
+                        lineWidth: 1,
+                        zIndex: 3
+                    },
+                    {
+                        type: 'line',
+                        name: 'BB Down',
+                        data: bb_down,
+                        lineWidth: 1,
+                        zIndex: 3
+                    },
                 ],
+
+                tooltip: {
+                    enabled: false
+                },
 
                 xAxis: {
                     min: start,
@@ -189,34 +406,50 @@
                     }
                 },
 
-                yAxis: [{
-                    labels: {
-                        align: 'right',
-                        x: -3
-                    },
-                    title: {
-                        text: 'OHLC'
-                    },
-                    height: '60%',
-                    lineWidth: 2
-                }, {
-                    labels: {
-                        align: 'right',
-                        x: -3
-                    },
-                    title: {
-                        text: 'Volume'
-                    },
-                    top: '65%',
-                    height: '35%',
-                    offset: 0,
-                    lineWidth: 2
-                }],
+                yAxis: [
+                    {
+                        labels: {
+                            align: 'right',
+                            x: -3
+                        },
+                        title: {
+                            text: 'OHLC'
+                        },
+                        height: '60%',
+                        lineWidth: 2,
+                        type: 'logarithmic'
+                    }, {
+                        labels: {
+                            align: 'right',
+                            x: -3
+                        },
+                        title: {
+                            text: 'Volume'
+                        },
+                        top: '60%',
+                        height: '20%',
+                        offset: 0,
+                        lineWidth: 2
+                    }, {
+                        labels: {
+                            align: 'right',
+                            x: -3
+                        },
+                        title: {
+                            text: 'RSI'
+                        },
+                        top: '80%',
+                        height: '20%',
+                        offset: 0,
+                        lineWidth: 2
+                    }
+                ],
 
             });
-        }, "json");
 
-        updateSelectedPoints();
+            updateSelectedPoints();
+
+        }, "json");
     });
 
 

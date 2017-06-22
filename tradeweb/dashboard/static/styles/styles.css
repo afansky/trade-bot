@@ -1,7 +1,5 @@
 #my-chart {
     height: 100%;
-    width: 80%;
-    float: left;
 }
 
 #my-chart .highcharts-point {
@@ -9,6 +7,6 @@
 }
 
 #sidebar {
-    width: 20%;
-    float: left;
+    height: 100%;
+    overflow: scroll;
 }
