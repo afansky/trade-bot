@@ -37,6 +37,8 @@
                     <tr>
                         <th>Time</th>
                         <th>Last</th>
+                        <th>Type</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -153,8 +155,16 @@
             for (let i = 0; i < data.length; i++) {
                 let point = data[i];
                 let date = new Date(point.time);
-
-                let s = $('<tr><td>' + formatDate(date) + '</td><td>' + point.price + '</td></tr>');
+                let button = $('<div/>').html('<button type="button" class="btn btn-sm"><span class="glyphicon glyphicon-remove"></span></button>').contents();
+                button.click(function(e) {
+                    e.stopPropagation();
+                    removePoint({x: point.time, type: 'unselected'});
+                });
+                let s = $('<tr>')
+                    .append($('<td>').append(formatDate(date)))
+                    .append($('<td>').append(point.price))
+                    .append($('<td>').append(getTypeIcon(point.type)))
+                    .append($('<td>').append(button));
                 s.click(function () {
                     let range = 3 * 24 * 3600 * 1000;
                     chart.xAxis[0].setExtremes(point.time - range, point.time + range);
@@ -173,6 +183,33 @@
             color = 'blue';
         }
         return color;
+    }
+
+    function getTypeIcon(type) {
+        let icon = '';
+        if (type === 'positive') {
+            icon = $('<span class="glyphicon glyphicon-menu-up"></span>');
+        } else if (type === 'negative') {
+            icon = $('<span class="glyphicon glyphicon-menu-down"></span>');
+        }
+        return icon;
+    }
+
+    function removePoint(point) {
+        $.post('http://localhost:8000/dashboard/removePoint/', {
+                'time': point.x
+            },
+            function (data, message) {
+                if (data === true) {
+                    for (let i = 0; i < Highcharts.charts[0].series[0].data.length; i++) {
+                        let p = Highcharts.charts[0].series[0].data[i];
+                        if (p.x === point.x) {
+                            p.update({color: getTypeColor(point.type)});
+                        }
+                    }
+                }
+                updateSelectedPoints();
+            }, "json");
     }
 
     $.getJSON('http://localhost:8000/dashboard/init/', function (data) {
@@ -318,6 +355,11 @@
                         data: ohlc,
                         zIndex: 1000,
                         cursor: 'pointer',
+                        states: {
+                            hover: {
+                                enabled: true
+                            }
+                        },
                         point: {
                             events: {
                                 click: function () {
@@ -340,17 +382,8 @@
                                             }, "json");
                                     } else {
                                         let point = this;
-                                        this.type = 'unselected';
-                                        $.post('http://localhost:8000/dashboard/removePoint/', {
-                                                'time': this.x,
-                                                'type': this.type
-                                            },
-                                            function (data, message) {
-                                                if (data === true) {
-                                                    point.update({color: getTypeColor(point.type)});
-                                                }
-                                                updateSelectedPoints();
-                                            }, "json");
+                                        point.type = 'unselected';
+                                        removePoint(point);
                                     }
                                 }
                             }
