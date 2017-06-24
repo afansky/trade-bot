@@ -151,6 +151,35 @@
         }, "json");
     }
 
+    function calculateRange(resolution) {
+        let result;
+        if (resolution === '1T') {
+            result = 60 * 60 * 1000;
+        } else if (resolution === '3T') {
+            result = 3 * 60 * 60 * 1000;
+        } else if (resolution === '5T') {
+            result = 6 * 60 * 60 * 1000;
+        } else if (resolution === '15T') {
+            result = 18 * 60 * 60 * 1000;
+        } else if (resolution === '30T') {
+            result = 1.5 * 24 * 60 * 60 * 1000;
+        } else if (resolution === '1h') {
+            result = 3.5 * 24 * 60 * 60 * 1000;
+        } else if (resolution === '2h') {
+            result = 7 * 24 * 60 * 60 * 1000;
+        } else if (resolution === '4h') {
+            result = 15 * 24 * 60 * 60 * 1000;
+        } else if (resolution === '6h') {
+            result = 20 * 24 * 60 * 60 * 1000;
+        } else if (resolution === '12h') {
+            result = 45 * 24 * 60 * 60 * 1000;
+        } else if (resolution === '1d') {
+            result = 90 * 24 * 60 * 60 * 1000;
+        } else {
+            result = 180 * 24 * 60 * 60 * 1000;
+        }
+        return result;
+    }
     function updateSelectedPoints() {
         $.getJSON('http://localhost:8000/dashboard/points/', function (data) {
             $("#point-table").find("> tbody").empty();
@@ -170,7 +199,7 @@
                     .append($('<td>').append(getTypeIcon(point)).append(point.resolution))
                     .append($('<td>').append(button));
                 s.click(function () {
-                    let range = 7 * 24 * 3600 * 1000;
+                    let range = calculateRange(point.resolution);
                     chart.xAxis[0].setExtremes(point.time - range, point.time + range);
                 });
                 $('#point-table').find('tbody').append(s);
