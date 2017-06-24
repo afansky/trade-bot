@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.template import loader
 import datetime
 import pandas as pd
+import stockstats as ss
 import numpy as np
 from pandas_highcharts import core as ph
 from rest_framework.decorators import api_view, renderer_classes
@@ -141,7 +142,7 @@ def series(request):
 
         data.append(
             [point_time, row['open'], row['high'], row['low'], row['close'], row['volume'],
-             row['ma_7'], row['ma_25'], row['rsi'], row['bb_up'], row['bb_down'], point_type])
+             row['ma_7'], row['ma_25'], row['rsi_7'], row['bb_up'], row['bb_down'], point_type])
 
     response = {
         'data': data,
@@ -200,8 +201,17 @@ def train_network():
 
 
 def calculate_indicators(df):
+    df_stock = ss.StockDataFrame.retype(df)
+    df_stock['rsi_7']
+    df_stock['close_7_sma']
+    df_stock['close_25_sma']
+    df_stock['boll_ub']
+    df_stock['boll_lb']
+
     df['ma_7'] = df['close'].rolling(window=7).mean().bfill()
     df['ma_25'] = df['close'].rolling(window=25).mean().bfill()
+
+
     df['rsi'] = rsi(df['close'])
     ma_35 = df['close'].rolling(window=35).mean().bfill()
     std_35 = pd.rolling_std(df['close'], window=35).bfill()
@@ -267,16 +277,15 @@ def remove_point(request):
 
 
 def rsi(df):
-    rsi_delta = df.diff().bfill()
+    rsi_delta = df.diff()[1:]
     delta_up = rsi_delta.copy()
     delta_down = rsi_delta.copy()
     delta_up[delta_up < 0] = 0
     delta_down[delta_down > 0] = 0
-    average_gain = pd.rolling_mean(delta_up, 3).bfill()
-    average_loss = pd.rolling_mean(delta_down, 3).bfill().abs()
+    average_gain = pd.rolling_mean(delta_up, 7)
+    average_loss = pd.rolling_mean(delta_down.abs(), 7)
 
     rs_value = average_gain / average_loss
-    rs_value = rs_value.fillna(method='bfill')
     rsi_result = 100.0 - (100.0 / (1.0 + rs_value))
     rsi_result = rsi_result.bfill()
     return rsi_result
