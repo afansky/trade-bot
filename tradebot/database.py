@@ -121,7 +121,7 @@ class CsvDatabase(object):
             counter = counter + 1
             if counter % 20000 == 0:
                 print('Processing tick number %s', counter)
-            db.btcebtcusd_3d.insert_one(
+            db['btcebtcusd_' + period].insert_one(
                 {'time': i, 'open': row['last']['open'], 'high': row['last']['high'], 'low': row['last']['low'],
                  'close': row['last']['close'], 'volume': row['volume']['sum']})
 

@@ -50,6 +50,8 @@
 </div>
 
 <script type="text/javascript">
+    var resolution = '3d';
+
     function formatDate(date) {
         var hours = date.getHours();
         var minutes = date.getMinutes();
@@ -69,7 +71,9 @@
         $.post("http://localhost:8000/dashboard/series/", {
             start: Math.round(e.min),
             end: Math.round(e.max)
-        }, function (data, textStatus) {
+        }, function (response, textStatus) {
+            var data = response.data;
+            resolution = response.resolution;
             // split the data set into ohlc and volume
             var ohlc = [],
                 volume = [],
@@ -156,17 +160,17 @@
                 let point = data[i];
                 let date = new Date(point.time);
                 let button = $('<div/>').html('<button type="button" class="btn btn-sm"><span class="glyphicon glyphicon-remove"></span></button>').contents();
-                button.click(function(e) {
+                button.click(function (e) {
                     e.stopPropagation();
                     removePoint({x: point.time, type: 'unselected'});
                 });
                 let s = $('<tr>')
                     .append($('<td>').append(formatDate(date)))
                     .append($('<td>').append(point.price))
-                    .append($('<td>').append(getTypeIcon(point.type)))
+                    .append($('<td>').append(getTypeIcon(point)).append(point.resolution))
                     .append($('<td>').append(button));
                 s.click(function () {
-                    let range = 3 * 24 * 3600 * 1000;
+                    let range = 7 * 24 * 3600 * 1000;
                     chart.xAxis[0].setExtremes(point.time - range, point.time + range);
                 });
                 $('#point-table').find('tbody').append(s);
@@ -185,11 +189,11 @@
         return color;
     }
 
-    function getTypeIcon(type) {
+    function getTypeIcon(point) {
         let icon = '';
-        if (type === 'positive') {
+        if (point.type === 'positive') {
             icon = $('<span class="glyphicon glyphicon-menu-up"></span>');
-        } else if (type === 'negative') {
+        } else if (point.type === 'negative') {
             icon = $('<span class="glyphicon glyphicon-menu-down"></span>');
         }
         return icon;
@@ -198,6 +202,25 @@
     function removePoint(point) {
         $.post('http://localhost:8000/dashboard/removePoint/', {
                 'time': point.x
+            },
+            function (data, message) {
+                if (data === true) {
+                    for (let i = 0; i < Highcharts.charts[0].series[0].data.length; i++) {
+                        let p = Highcharts.charts[0].series[0].data[i];
+                        if (p.x === point.x) {
+                            p.update({color: getTypeColor(point.type)});
+                        }
+                    }
+                }
+                updateSelectedPoints();
+            }, "json");
+    }
+
+    function addPoint(point) {
+        $.post('http://localhost:8000/dashboard/addPoint/', {
+                'time': point.x,
+                'type': point.type,
+                'resolution': resolution
             },
             function (data, message) {
                 if (data === true) {
@@ -224,7 +247,10 @@
         $.post("http://localhost:8000/dashboard/series/", {
             start: start,
             end: end
-        }, function (data, textStatus) {
+        }, function (response, textStatus) {
+
+            var data = response.data;
+            resolution = response.resolution;
 
             // split the data set into ohlc and volume
             var ohlc = [],
@@ -309,6 +335,21 @@
                                 enabled: false
                             }
                         },
+                        point: {
+                            events: {
+                                click: function () {
+                                    if (this.type === 'unselected') {
+                                        let point = this;
+                                        this.type = pointsMode;
+                                        addPoint(point);
+                                    } else {
+                                        let point = this;
+                                        point.type = 'unselected';
+                                        removePoint(point);
+                                    }
+                                }
+                            }
+                        },
                     },
                     candlestick: {
                         color: '#C60606',
@@ -330,7 +371,58 @@
                 },
 
                 rangeSelector: {
-                    inputEnabled: true,
+                    inputEnabled: false,
+                    buttons: [{
+                        type: 'hour',
+                        count: 2,
+                        text: '2h'
+                    },{
+                        type: 'hour',
+                        count: 6,
+                        text: '6h'
+                    },{
+                        type: 'hour',
+                        count: 12,
+                        text: '12h'
+                    },{
+                        type: 'hour',
+                        count: 36,
+                        text: '1.5d'
+                    },{
+                        type: 'day',
+                        count: 3,
+                        text: '3d'
+                    },{
+                        type: 'week',
+                        count: 1,
+                        text: '1w'
+                    },{
+                        type: 'week',
+                        count: 2,
+                        text: '2w'
+                    },{
+                        type: 'month',
+                        count: 1,
+                        text: '1m'
+                    }, {
+                        type: 'month',
+                        count: 3,
+                        text: '3m'
+                    }, {
+                        type: 'month',
+                        count: 6,
+                        text: '6m'
+                    }, {
+                        type: 'ytd',
+                        text: 'YTD'
+                    }, {
+                        type: 'year',
+                        count: 1,
+                        text: '1y'
+                    }, {
+                        type: 'all',
+                        text: 'All'
+                    }]
                 },
 
                 navigator: {
@@ -358,34 +450,6 @@
                         states: {
                             hover: {
                                 enabled: true
-                            }
-                        },
-                        point: {
-                            events: {
-                                click: function () {
-                                    if (this.series.type !== 'candlestick') {
-                                        return;
-                                    }
-
-                                    if (this.type === 'unselected') {
-                                        let point = this;
-                                        this.type = pointsMode;
-                                        $.post('http://localhost:8000/dashboard/addPoint/', {
-                                                'time': this.x,
-                                                'type': this.type
-                                            },
-                                            function (data, message) {
-                                                if (data === true) {
-                                                    point.update({color: getTypeColor(point.type)});
-                                                }
-                                                updateSelectedPoints();
-                                            }, "json");
-                                    } else {
-                                        let point = this;
-                                        point.type = 'unselected';
-                                        removePoint(point);
-                                    }
-                                }
                             }
                         },
                     },
@@ -428,7 +492,7 @@
                 ],
 
                 tooltip: {
-                    enabled: false
+                    enabled: true
                 },
 
                 xAxis: {

@@ -33,7 +33,7 @@ class EventProfiler:
 
     def profile(self):
         logger.info("loading data for %s" % self.pair)
-        self.db.import_resampled_data('3D')
+        self.db.import_resampled_data('3T')
 
 
     def test_network(self):

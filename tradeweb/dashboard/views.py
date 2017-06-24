@@ -75,31 +75,62 @@ def series(request):
     end = datetime.datetime.fromtimestamp(int(request.POST['end']) / 1000)
 
     delta_days = (end - start).days
+    delta_hours = -1
+    if delta_days <= 1:
+        delta_hours = (end - start).seconds // 3600
 
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
 
-    if delta_days <= 7:
-        ticks = db.btcebtcusd_2h.find({'time': {'$lt': end, '$gte': start}}).sort([('_id', 1)])
-    elif delta_days > 7 and delta_days <= 14:
-        ticks = db.btcebtcusd_4h.find({'time': {'$lt': end, '$gte': start}}).sort([('_id', 1)])
-    elif delta_days > 14 and delta_days <= 18:
-        ticks = db.btcebtcusd_6h.find({'time': {'$lt': end, '$gte': start}}).sort([('_id', 1)])
-    elif delta_days > 19 and delta_days <= 40:
-        ticks = db.btcebtcusd_12h.find({'time': {'$lt': end, '$gte': start}}).sort([('_id', 1)])
-    elif delta_days > 40 and delta_days <= 80:
-        ticks = db.btcebtcusd_1d.find({'time': {'$lt': end, '$gte': start}}).sort([('_id', 1)])
+    if delta_days == 0 and 0 < delta_hours <= 2:
+        resolution = '1T'
+        resolution_second = 60
+    elif delta_days == 0 and 2 < delta_hours <= 6:
+        resolution = '3T'
+        resolution_second = 60 * 3
+    elif delta_days == 0 and 6 < delta_hours <= 12:
+        resolution = '5T'
+        resolution_second = 60 * 5
+    elif delta_days <= 1 and (delta_hours > 12 or (delta_days == 1 and delta_hours >= 0)):
+        resolution = '15T'
+        resolution_second = 60 * 15
+    elif 1 < delta_days <= 3:
+        resolution = '30T'
+        resolution_second = 60 * 30
+    elif 3 < delta_days < 8:
+        resolution = '1h'
+        resolution_second = 60 * 60
+    elif 8 <= delta_days < 16:
+        resolution = '2h'
+        resolution_second = 60 * 60 * 2
+    elif 16 <= delta_days < 30:
+        resolution = '4h'
+        resolution_second = 60 * 60 * 4
+    elif 30 <= delta_days < 60:
+        resolution = '6h'
+        resolution_second = 60 * 60 * 6
+    elif 60 <= delta_days < 120:
+        resolution = '12h'
+        resolution_second = 60 * 60 * 12
+    elif 120 <= delta_days < 240:
+        resolution = '1d'
+        resolution_second = 60 * 60 * 24
     else:
-        ticks = db.btcebtcusd_3d.find({'time': {'$lt': end, '$gte': start}}).sort([('_id', 1)])
+        resolution = '3d'
+        resolution_second = 60 * 60 * 24 * 3
+
+    ticks = db['btcebtcusd_' + resolution].find(
+        {'time': {'$lt': end, '$gte': start - datetime.timedelta(seconds=35 * resolution_second)}}).sort([('_id', 1)])
 
     df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
     df = df.set_index(['time'])
     df = df.bfill()
     calculate_indicators(df)
+    df = df[35:]
 
     positive_points = load_selected_points()
 
-    response = []
+    data = []
     for i, row in df.iterrows():
         point_time = int(time.mktime(i.timetuple())) * 1000
 
@@ -108,9 +139,14 @@ def series(request):
             if p['time'] == point_time:
                 point_type = p['type']
 
-        response.append(
+        data.append(
             [point_time, row['open'], row['high'], row['low'], row['close'], row['volume'],
              row['ma_7'], row['ma_25'], row['rsi'], row['bb_up'], row['bb_down'], point_type])
+
+    response = {
+        'data': data,
+        'resolution': resolution
+    }
 
     return Response(response)
 
@@ -124,7 +160,7 @@ def train_network():
     df = df.bfill()
     calculate_indicators(df)
 
-    point_ticks = db.btcebtcusd_1h_points.find({}, {'time': 1, 'price': 1, '_id': 0})
+    point_ticks = db.btcebtcusd_points.find({}, {'time': 1, 'price': 1, '_id': 0})
     point_tick_list = list(point_ticks)
 
     frames = []
@@ -194,7 +230,7 @@ def points(request):
 def load_selected_points():
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    ticks = db.btcebtcusd_1h_points.find({}, {'time': 1, 'price': 1, 'type': 1, '_id': 0})
+    ticks = db.btcebtcusd_points.find({}, {'time': 1, 'price': 1, 'type': 1, 'resolution': 1, '_id': 0})
     tick_list = list(ticks)
     for tick in tick_list:
         tick['time'] = int(time.mktime(tick['time'].timetuple()) * 1000)
@@ -205,14 +241,16 @@ def load_selected_points():
 @renderer_classes((JSONRenderer,))
 def add_point(request):
     point_time = datetime.datetime.fromtimestamp(int(request.POST['time']) / 1000)
+    point_resolution = request.POST['resolution']
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    tick = db.btcebtcusd_1h.find_one({'time': point_time})
+    tick = db['btcebtcusd_' + point_resolution].find_one({'time': point_time})
 
     point_type = request.POST['type']
     success = False
     if tick is not None and not math.isnan(tick['close']):
-        db.btcebtcusd_1h_points.insert_one({'time': point_time, 'price': tick['close'], 'type': point_type})
+        db.btcebtcusd_points.insert_one(
+            {'time': point_time, 'price': tick['close'], 'type': point_type, 'resolution': point_resolution})
         success = True
 
     return Response(success)
@@ -224,7 +262,7 @@ def remove_point(request):
     point_time = datetime.datetime.fromtimestamp(int(request.POST['time']) / 1000)
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    db.btcebtcusd_1h_points.remove({'time': point_time})
+    db.btcebtcusd_points.remove({'time': point_time})
     return Response(True)
 
 
