@@ -15,6 +15,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn import preprocessing
 import math
 
+points_collection = 'btcebtcusd_points_auto'
 
 # Create your views here.
 
@@ -153,30 +154,45 @@ def series(request):
 
 
 def train_network():
+    frame_length = 20
+
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    ticks = db.btcebtcusd_2h.find({}).sort([('_id', 1)])
+    ticks = db.btcebtcusd_3T.find({'time': {'$gte': datetime.datetime(2017, 4, 1)}}).sort([('time', 1)])
     df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
     df = df.set_index(['time'])
     df = df.bfill()
     calculate_indicators(df)
 
-    point_ticks = db.btcebtcusd_points.find({}, {'time': 1, 'price': 1, '_id': 0})
-    point_tick_list = list(point_ticks)
+    point_ticks_positive = db[points_collection].find({'type': 'positive'}, {'time': 1, 'price': 1, '_id': 0})
+    point_ticks_negative = db[points_collection].find({'type': 'negative'}, {'time': 1, 'price': 1, '_id': 0})
+    points_positive = list(point_ticks_positive)
+    points_negative = list(point_ticks_negative)
 
-    frames = []
-    for point in point_tick_list:
-        point_frame = df.loc[:point['time']].tail(20)
-        frames.append(point_frame)
+    positive_frames = []
+    for point in points_positive:
+        point_frame = df.loc[:point['time']].tail(frame_length)
+        positive_frames.append(point_frame)
 
-    total_x = len(frames)
-    frame_length = 20
-    total_features = len(df.columns)
+    negative_frames = []
+    for point in points_negative:
+        point_frame = df.loc[:point['time']].tail(frame_length)
+        negative_frames.append(point_frame)
+
+    all_frames = positive_frames + negative_frames
+    positive_length = len(positive_frames)
+    total_x = len(all_frames)
+
+    total_features = 10
 
     x = np.empty([total_x, frame_length * total_features])
     y = np.empty(total_x)
-    for i, c in enumerate(frames):
-        y[i] = 1
+    for i, c in enumerate(all_frames):
+        if i < positive_length:
+            y[i] = 1
+        else:
+            y[i] = 0
+
         x[i, :] = np.nan_to_num(np.concatenate((
             c['open'].values,
             c['high'].values,
@@ -185,14 +201,14 @@ def train_network():
             c['volume'].values,
             c['ma_7'].values,
             c['ma_25'].values,
-            c['rsi'].values,
+            c['rsi_7'].values,
             c['bb_up'].values,
             c['bb_down'].values
         )))
 
     x = preprocessing.normalize(x)
-    nn = MLPClassifier(alpha=1e-5,
-                           hidden_layer_sizes=(176, 176, 176, 176), activation='logistic')
+    nn = MLPClassifier(alpha=1e-3,
+                           hidden_layer_sizes=(175, 175, 175, 175, 175, 175), activation='logistic')
 
     nn.fit(x, y)
 
@@ -210,7 +226,6 @@ def calculate_indicators(df):
 
     df['ma_7'] = df['close'].rolling(window=7).mean().bfill()
     df['ma_25'] = df['close'].rolling(window=25).mean().bfill()
-
 
     df['rsi'] = rsi(df['close'])
     ma_35 = df['close'].rolling(window=35).mean().bfill()
@@ -240,7 +255,8 @@ def points(request):
 def load_selected_points():
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    ticks = db.btcebtcusd_points.find({}, {'time': 1, 'price': 1, 'type': 1, 'resolution': 1, '_id': 0})
+    ticks = db[points_collection].find({}, {'time': 1, 'price': 1, 'type': 1, 'resolution': 1, '_id': 0}).sort(
+        [('time', -1)])
     tick_list = list(ticks)
     for tick in tick_list:
         tick['time'] = int(time.mktime(tick['time'].timetuple()) * 1000)
@@ -259,7 +275,7 @@ def add_point(request):
     point_type = request.POST['type']
     success = False
     if tick is not None and not math.isnan(tick['close']):
-        db.btcebtcusd_points.insert_one(
+        db[points_collection].insert_one(
             {'time': point_time, 'price': tick['close'], 'type': point_type, 'resolution': point_resolution})
         success = True
 
@@ -272,7 +288,7 @@ def remove_point(request):
     point_time = datetime.datetime.fromtimestamp(int(request.POST['time']) / 1000)
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    db.btcebtcusd_points.remove({'time': point_time})
+    db[points_collection].remove({'time': point_time})
     return Response(True)
 
 
@@ -294,4 +310,4 @@ def rsi(df):
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def train(request):
-    return train_network()
+    return Response(train_network())
