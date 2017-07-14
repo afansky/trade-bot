@@ -9,10 +9,9 @@ import stockstats as ss
 import random
 from sklearn import svm
 from sklearn.metrics import mean_squared_error, f1_score
-from keras.layers import Activation
-from keras.layers.recurrent import LSTM
-from keras.models import Sequential
 import math
+import matplotlib.pyplot as plt
+import collections
 
 logger = logging.getLogger(__name__)
 
@@ -76,13 +75,13 @@ def find_buy_points():
 
 
 def prepare_data():
-    frame_length = 20
+    frame_length = 7
 
     print('Loading data...')
 
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    date_filter = {'$gte': datetime.datetime(2016, 11, 1), '$lt': datetime.datetime(2017, 1, 5)}
+    date_filter = {'$gte': datetime.datetime(2017, 1, 1), '$lt': datetime.datetime(2017, 3, 1)}
     ticks = db.btcebtcusd_1T.find(
         {'time': date_filter}).sort([('time', 1)])
     df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
@@ -102,9 +101,11 @@ def prepare_data():
     # negative_sample = random.sample(points_negative, 15)
 
     skip_items = 50
+    lines_in_shard = 10000
+    shards = split_in_shards(df, frame_length, lines_in_shard)
 
     print('Creating frames...')
-    total_features = 23
+    total_features = 8
     total_x = len(sample)
     print('Total amount of frames: %s' % total_x)
     y = np.empty([total_x - skip_items])
@@ -122,7 +123,9 @@ def prepare_data():
             print('Processing item #%s, last batch took %s seconds, est. left: %s' % (
                 i, seconds_delta, str(datetime.timedelta(seconds=total_seconds_estimate))))
 
-        point_frame = df.loc[:point['time']].tail(frame_length)
+        point_time = point['time']
+        point_frame = find_point_frame(frame_length, point_time, shards)
+
         max_change = float(point['max_change'] * 100)
         min_change = float(abs(point['min_change']) * 100)
         if max_change >= 0.31 and min_change <= 0.12:
@@ -138,23 +141,8 @@ def prepare_data():
             point_frame['close_-1_r'].values,
             point_frame['volume_-1_r'].values,
             point_frame['ma_7'].values,
-            point_frame['ma_25'].values,
-            point_frame['bb_up'].values,
-            point_frame['bb_down'].values,
-            point_frame['ma_7_diff'].values,
-            point_frame['ma_25_diff'].values,
             point_frame['rsi_7'].values,
-            point_frame['rsi_25'].values,
             point_frame['macd'].values,
-            point_frame['macds'].values,
-            point_frame['macdh'].values,
-            point_frame['kdjk'].values,
-            point_frame['kdjd'].values,
-            point_frame['kdjj'].values,
-            point_frame['pdi'].values,
-            point_frame['mdi'].values,
-            point_frame['bb_up_diff'].values,
-            point_frame['bb_down_diff'].values
         )))
 
     print('Normalizing...')
@@ -202,6 +190,27 @@ def prepare_data():
     # return min_f1, min_parameters
 
 
+def find_point_frame(frame_length, point_time, shards):
+    for k, v in shards.items():
+        if point_time > k:
+            continue
+        return v.loc[:point_time].tail(frame_length)
+    raise ValueError
+
+
+def split_in_shards(df, frame_length, lines_in_shard):
+    shards = np.array_split(df, lines_in_shard)
+    mapped_shards = {}
+    previous_shard = None
+    for i, s in enumerate(shards):
+        if i == 0:
+            mapped_shards[s.index[-1]] = s
+        else:
+            mapped_shards[s.index[-1]] = pd.concat([previous_shard.tail(frame_length), s])
+        previous_shard = s
+    return collections.OrderedDict(sorted(mapped_shards.items()))
+
+
 def repeat_training_network():
     x = np.load('network_data_x.npy')
     y = np.load('network_data_y.npy')
@@ -220,8 +229,11 @@ def repeat_training_network():
     cv_y = y[cv_data_index:test_data_index]
     test_y = y[test_data_index:]
 
+    # poly = preprocessing.PolynomialFeatures(2)
+    # train_x = poly.fit_transform(train_x)
+
     # print('Training network for alpha=%s' % alpha)
-    nn = MLPClassifier(alpha=0.00001, tol=0.0001, solver='adam', hidden_layer_sizes=(1000, 250),
+    nn = MLPClassifier(alpha=0.001, tol=0.0001, solver='adam', hidden_layer_sizes=(500, 250),
                        activation='logistic', verbose=True)
     nn.fit(train_x, train_y)
 
@@ -237,16 +249,13 @@ def repeat_training_network():
     # return min_f1, min_parameters
 
 
-def repeat_training_network_keras():
+def find_regularization():
     x = np.load('network_data_x.npy')
     y = np.load('network_data_y.npy')
-
-    y = y * 1000
 
     print('Training network...')
 
     total_length = len(x)
-    total_features = len(x[0])
     cv_data_index = int(total_length * 0.8)
     test_data_index = int(total_length * 0.9)
 
@@ -258,27 +267,41 @@ def repeat_training_network_keras():
     cv_y = y[cv_data_index:test_data_index]
     test_y = y[test_data_index:]
 
-    # print('Training network with layer=%s' % layer)
-    model = Sequential()
-    model.add(LSTM(250, input_dim=total_features))
-    model.add(LSTM(250, input_dim=total_features))
-    model.add(LSTM(250, input_dim=total_features))
-    model.add(Activation('relu'))
+    # poly = preprocessing.PolynomialFeatures(2)
+    # train_x = poly.fit_transform(train_x)
 
-    nn = MLPRegressor(alpha=0.0001, tol=0.0001, solver='adam', hidden_layer_sizes=(1000, 250),
-                      activation='tanh', verbose=True)
-    nn.fit(train_x, train_y)
+    alphas = [0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.5, 2, 2.5, 3, 3.5, 4, 5, 10]
+    alphas_length = len(alphas)
+    iterations = range(0, alphas_length)
+    train_errors = np.zeros(alphas_length)
+    cv_errors = np.zeros(alphas_length)
+    for i, alpha in enumerate(alphas):
+        print('Training network for alpha=%s' % alpha)
+        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(100, 100, 100),
+                           activation='logistic', verbose=True, max_iter=1000)
+        nn.fit(train_x, train_y)
 
-    # clf = svm.SVC()
-    # clf.fit(x,y)
+        # clf = svm.SVC()
+        # clf.fit(x,y)
 
-    print('Train set error: %s' % mean_squared_error(train_y, nn.predict(train_x)))
-    print('CV set error: %s' % mean_squared_error(cv_y, nn.predict(cv_x)))
-    print('Test set error: %s' % mean_squared_error(test_y, nn.predict(test_x)))
+        train_error = f1_score(train_y, nn.predict(train_x))
+        print('Train set error: %s' % train_error)
+        train_errors[i] = train_error
+
+        cv_error = f1_score(cv_y, nn.predict(cv_x))
+        cv_errors[i] = cv_error
+        print('CV set error: %s' % cv_error)
+
+        print('Test set error: %s' % f1_score(test_y, nn.predict(test_x)))
     # result_2 = clf.predict(x)
     # error = f1_error(y, result)
 
     # return min_f1, min_parameters
+    plt.interactive(True)
+    plt.plot(iterations, train_errors)
+    plt.plot(iterations, cv_errors)
+    plt.show()
+    input('Press Enter')
 
 
 def calculate_indicators(df):
@@ -351,5 +374,6 @@ if __name__ == '__main__':
     prepare_data()
     # repeat_training_network()
     # find_buy_points()
+    # find_regularization()
 
     logger.info("finished event profiler process")
