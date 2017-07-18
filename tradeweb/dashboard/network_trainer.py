@@ -8,10 +8,12 @@ import logging
 import stockstats as ss
 import random
 from sklearn import svm
-from sklearn.metrics import mean_squared_error, f1_score
+from sklearn.metrics import mean_squared_error, f1_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split, cross_val_score
 import math
 import matplotlib.pyplot as plt
 import collections
+from sklearn.svm import SVC
 
 logger = logging.getLogger(__name__)
 
@@ -75,19 +77,22 @@ def find_buy_points():
 
 
 def prepare_data():
-    frame_length = 7
+    frame_length = 10
 
     print('Loading data...')
 
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    date_filter = {'$gte': datetime.datetime(2017, 1, 1), '$lt': datetime.datetime(2017, 3, 1)}
+    date_filter = {'$gte': datetime.datetime(2014, 1, 1), '$lt': datetime.datetime(2017, 3, 1)}
     ticks = db.btcebtcusd_1T.find(
         {'time': date_filter}).sort([('time', 1)])
     df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
     df = df.set_index(['time'])
     df = df.bfill()
+    # df = df.dropna(0)
     calculate_indicators(df)
+
+    # df = df.dropna(0)
 
     point_ticks = db.btcebtcusd_points_train.find({'time': date_filter},
                                                   {'time': 1, 'price': 1, 'max_change': 1, 'max_change_index': 1,
@@ -100,12 +105,12 @@ def prepare_data():
     # positive_sample = random.sample(points_positive, 5)
     # negative_sample = random.sample(points_negative, 15)
 
-    skip_items = 50
-    lines_in_shard = 10000
+    skip_items = 135
+    lines_in_shard = 1000
     shards = split_in_shards(df, frame_length, lines_in_shard)
 
     print('Creating frames...')
-    total_features = 8
+    total_features = 12
     total_x = len(sample)
     print('Total amount of frames: %s' % total_x)
     y = np.empty([total_x - skip_items])
@@ -133,20 +138,25 @@ def prepare_data():
         else:
             buy_point = 0
 
-        y[i - skip_items] = buy_point
-        x[i - skip_items, :] = np.nan_to_num(np.concatenate((
-            point_frame['open_-1_r'].values,
-            point_frame['high_-1_r'].values,
-            point_frame['low_-1_r'].values,
-            point_frame['close_-1_r'].values,
-            point_frame['volume_-1_r'].values,
-            point_frame['ma_7'].values,
-            point_frame['rsi_7'].values,
-            point_frame['macd'].values,
-        )))
+        try:
+            y[i - skip_items] = buy_point
+            x[i - skip_items, :] = np.nan_to_num(np.concatenate((
+                point_frame['open_-1_r'].values,
+                point_frame['high_-1_r'].values,
+                point_frame['low_-1_r'].values,
+                point_frame['close_-1_r'].values,
+                point_frame['volume_delta'].values,
+                point_frame['close_7_sma_-1_r'].values,
+                point_frame['rsi_7'].values,
+                point_frame['macd'].values,
+                point_frame['rsi_buy'].values,
+                point_frame['rsi_7_30.0_le_10_c'].values,
+                point_frame['boll_close'].values,
+                point_frame['boll_lb_close'].values,
+            )))
+        except ValueError:
+            print('Da fuq')
 
-    print('Normalizing...')
-    x = preprocessing.scale(x)
 
     np.save('network_data_x.npy', x)
     np.save('network_data_y.npy', y)
@@ -253,46 +263,40 @@ def find_regularization():
     x = np.load('network_data_x.npy')
     y = np.load('network_data_y.npy')
 
+    print('Normalizing...')
+    # попробовать скейлить этих ребят отдельно
+    x = preprocessing.scale(x)
+
     print('Training network...')
-
-    total_length = len(x)
-    cv_data_index = int(total_length * 0.8)
-    test_data_index = int(total_length * 0.9)
-
-    train_x = x[:cv_data_index]
-    cv_x = x[cv_data_index:test_data_index]
-    test_x = x[test_data_index:]
-
-    train_y = y[:cv_data_index]
-    cv_y = y[cv_data_index:test_data_index]
-    test_y = y[test_data_index:]
-
+    train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.1)
     # poly = preprocessing.PolynomialFeatures(2)
     # train_x = poly.fit_transform(train_x)
 
-    alphas = [0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.5, 2, 2.5, 3, 3.5, 4, 5, 10]
+    alphas = [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
     alphas_length = len(alphas)
     iterations = range(0, alphas_length)
     train_errors = np.zeros(alphas_length)
     cv_errors = np.zeros(alphas_length)
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
-        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(100, 100, 100),
+        nn = MLPClassifier(alpha=alpha, tol=0.000001, solver='adam', hidden_layer_sizes=(200, 200),
                            activation='logistic', verbose=True, max_iter=1000)
         nn.fit(train_x, train_y)
 
         # clf = svm.SVC()
         # clf.fit(x,y)
 
-        train_error = f1_score(train_y, nn.predict(train_x))
+        train_predict = nn.predict(train_x)
+        train_error = f1_score(train_y, train_predict)
         print('Train set error: %s' % train_error)
         train_errors[i] = train_error
+        print(classification_report(train_y, train_predict))
+        print(confusion_matrix(train_y, train_predict))
 
-        cv_error = f1_score(cv_y, nn.predict(cv_x))
-        cv_errors[i] = cv_error
-        print('CV set error: %s' % cv_error)
-
-        print('Test set error: %s' % f1_score(test_y, nn.predict(test_x)))
+        test_predict = nn.predict(test_x)
+        print('Test set error: %s' % f1_score(test_y, test_predict))
+        print(classification_report(test_y, test_predict))
+        print(confusion_matrix(test_y, test_predict))
     # result_2 = clf.predict(x)
     # error = f1_error(y, result)
 
@@ -307,37 +311,36 @@ def find_regularization():
 def calculate_indicators(df):
     df_stock = ss.StockDataFrame.retype(df)
     df_stock['rsi_7']
-    df_stock['rsi_25']
     df_stock['macd']
-    df_stock['macds']
-    df_stock['macdh']
-    df_stock['kdjk']
-    df_stock['kdjd']
-    df_stock['kdjj']
-    df_stock['pdi']
-    df_stock['mdi']
-    df_stock['close_7_sma']
-    df_stock['close_25_sma']
-    df_stock['boll_ub']
-    df_stock['boll_lb']
+    df_stock['close_7_sma_-1_r']
     df_stock['open_-1_r']
     df_stock['close_-1_r']
     df_stock['high_-1_r']
     df_stock['low_-1_r']
     df_stock['volume_-1_r']
+    df_stock['volume_delta']
+    df_stock['rsi_7_30.0_le_10_c']
+    df_stock['boll']
+    df_stock['boll_lb']
+    df_stock['boll_close'] = np.log(df_stock['boll']/df_stock['close'])
+    df_stock['boll_lb_close'] = np.log(df_stock['boll_lb']/df_stock['close'])
 
-    df['ma_7'] = df['close'].rolling(window=7).mean().bfill()
-    df['ma_25'] = df['close'].rolling(window=25).mean().bfill()
+    df_stock.loc[df_stock['rsi_7'] <= 30, 'rsi_buy'] = 1
+    df_stock.loc[df_stock['rsi_7'] > 30, 'rsi_buy'] = 0
+    df_stock.loc[df_stock['rsi_7'] >= 70, 'rsi_buy'] = -1
 
-    ma_35 = df['close'].rolling(window=35).mean().bfill()
-    std_35 = pd.rolling_std(df['close'], window=35).bfill()
-    df['bb_up'] = ma_35 + (std_35 * 2)
-    df['bb_down'] = ma_35 - (std_35 * 2)
-
-    df['ma_7_diff'] = df['close'] - df['ma_7']
-    df['ma_25_diff'] = df['close'] - df['ma_25']
-    df['bb_up_diff'] = df['bb_up'] - df['close']
-    df['bb_down_diff'] = df['close'] - df['bb_down']
+    # df['ma_7'] = df['close'].rolling(window=7).mean().bfill()
+    # df['ma_25'] = df['close'].rolling(window=25).mean().bfill()
+    #
+    # ma_35 = df['close'].rolling(window=35).mean().bfill()
+    # std_35 = pd.rolling_std(df['close'], window=35).bfill()
+    # df['bb_up'] = ma_35 + (std_35 * 2)
+    # df['bb_down'] = ma_35 - (std_35 * 2)
+    #
+    # df['ma_7_diff'] = df['close'] - df['ma_7']
+    # df['ma_25_diff'] = df['close'] - df['ma_25']
+    # df['bb_up_diff'] = df['bb_up'] - df['close']
+    # df['bb_down_diff'] = df['close'] - df['bb_down']
 
 
 def f1_error(y, z):
@@ -371,9 +374,9 @@ if __name__ == '__main__':
     # print('Min error = %s' % min_error)
     # print('Alpha=%s, i1=%s, i2=%s, i3=%s' % (min_params[0], min_params[1], min_params[2], min_params[3]))
 
-    prepare_data()
+    # prepare_data()
     # repeat_training_network()
     # find_buy_points()
-    # find_regularization()
+    find_regularization()
 
     logger.info("finished event profiler process")
