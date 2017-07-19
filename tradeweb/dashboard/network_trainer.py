@@ -22,7 +22,7 @@ def find_buy_points():
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
     ticks = db.btcebtcusd_1T.find(
-        {'time': {'$gte': datetime.datetime(2013, 1, 1), '$lt': datetime.datetime(2017, 3, 5)}}).sort([('time', 1)])
+        {'time': {'$gte': datetime.datetime(2014, 1, 1), '$lt': datetime.datetime(2017, 3, 5)}}).sort([('time', 1)])
     df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
     df = df.set_index(['time'])
     df = df.bfill()
@@ -77,7 +77,7 @@ def find_buy_points():
 
 
 def prepare_data():
-    frame_length = 10
+    frame_length = 20
 
     print('Loading data...')
 
@@ -105,12 +105,12 @@ def prepare_data():
     # positive_sample = random.sample(points_positive, 5)
     # negative_sample = random.sample(points_negative, 15)
 
-    skip_items = 135
+    skip_items = 200
     lines_in_shard = 1000
     shards = split_in_shards(df, frame_length, lines_in_shard)
 
     print('Creating frames...')
-    total_features = 12
+    total_features = 14
     total_x = len(sample)
     print('Total amount of frames: %s' % total_x)
     y = np.empty([total_x - skip_items])
@@ -148,9 +148,15 @@ def prepare_data():
                 point_frame['volume_delta'].values,
                 point_frame['close_7_sma_-1_r'].values,
                 point_frame['rsi_7'].values,
+                point_frame['rsi_14'].values,
+#                point_frame['cci_5'].values,
+#                point_frame['cci_5_-100.0_le_10_c'].values,
+#                point_frame['cci_14'].values,
+#                point_frame['cci_14_-100.0_le_10_c'].values,
                 point_frame['macd'].values,
                 point_frame['rsi_buy'].values,
                 point_frame['rsi_7_30.0_le_10_c'].values,
+                point_frame['rsi_14_30.0_le_10_c'].values,
                 point_frame['boll_close'].values,
                 point_frame['boll_lb_close'].values,
             )))
@@ -279,10 +285,9 @@ def find_regularization():
     cv_errors = np.zeros(alphas_length)
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
-        nn = MLPClassifier(alpha=alpha, tol=0.000001, solver='adam', hidden_layer_sizes=(200, 200),
+        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(160, 160, 160, 160),
                            activation='logistic', verbose=True, max_iter=1000)
         nn.fit(train_x, train_y)
-
         # clf = svm.SVC()
         # clf.fit(x,y)
 
@@ -320,10 +325,16 @@ def calculate_indicators(df):
     df_stock['volume_-1_r']
     df_stock['volume_delta']
     df_stock['rsi_7_30.0_le_10_c']
+    df_stock['rsi_14_30.0_le_10_c']
     df_stock['boll']
     df_stock['boll_lb']
     df_stock['boll_close'] = np.log(df_stock['boll']/df_stock['close'])
     df_stock['boll_lb_close'] = np.log(df_stock['boll_lb']/df_stock['close'])
+#    df_stock['rsi_14']
+#    df_stock['cci_5']
+#    df_stock['cci_14']
+#    df_stock['cci_5_-100.0_le_10_c']
+#    df_stock['cci_14_-100.0_le_10_c']
 
     df_stock.loc[df_stock['rsi_7'] <= 30, 'rsi_buy'] = 1
     df_stock.loc[df_stock['rsi_7'] > 30, 'rsi_buy'] = 0
@@ -374,7 +385,7 @@ if __name__ == '__main__':
     # print('Min error = %s' % min_error)
     # print('Alpha=%s, i1=%s, i2=%s, i3=%s' % (min_params[0], min_params[1], min_params[2], min_params[3]))
 
-    # prepare_data()
+    prepare_data()
     # repeat_training_network()
     # find_buy_points()
     find_regularization()
