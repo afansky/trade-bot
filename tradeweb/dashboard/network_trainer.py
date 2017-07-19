@@ -354,6 +354,38 @@ def calculate_indicators(df):
     # df['bb_down_diff'] = df['close'] - df['bb_down']
 
 
+def import_resampled_data(filename, database_name, period):
+    print('Loading CSV file...')
+    df = pd.read_csv(filename, header=None, sep=",", names=['time', 'last', 'volume'],
+                         parse_dates=True, date_parser=dateparse, index_col=0)
+    print('Resampling data...')
+    df['last'] = pd.to_numeric(df['last']).bfill()
+    df['volume'] = pd.to_numeric(df['volume']).bfill()
+    price = df.resample(period, how={'last': 'ohlc'})
+    volume = df.resample(period, how={'volume': 'sum'})
+    volume.columns = pd.MultiIndex.from_tuples([('volume', 'sum')])
+    df = pd.concat([price, volume], axis=1)
+
+    print('Uploading to the database...')
+    client = MongoClient("mongodb://localhost:27017")
+    db = client.bitcoinbot
+    counter = 0
+
+    for i, row in df.iterrows():
+        counter = counter + 1
+        if counter % 20000 == 0:
+            print('Processing tick number %s', counter)
+        db[database_name + '_' + period].insert_one(
+            {'time': i, 'open': row['last']['open'], 'high': row['last']['high'], 'low': row['last']['low'],
+             'close': row['last']['close'], 'volume': row['volume']['sum']})
+
+    print('Done.')
+
+
+def dateparse(time_in_secs):
+    return datetime.datetime.fromtimestamp(float(time_in_secs))
+
+
 def f1_error(y, z):
     true_positive = 0
     false_positive = 0
@@ -388,6 +420,9 @@ if __name__ == '__main__':
     prepare_data()
     # repeat_training_network()
     # find_buy_points()
-    find_regularization()
+    # find_regularization()
+    periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
+    for period in periods:
+        import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
 
     logger.info("finished event profiler process")
