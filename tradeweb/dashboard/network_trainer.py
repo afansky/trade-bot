@@ -340,7 +340,7 @@ def find_incremental_regularization():
             print('Splitting into training set and test set')
             train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.1)
 
-            nn.partial_fit(train_x, train_y)
+            nn.partial_fit(train_x, train_y, classes=np.unique(train_y))
 
             train_predict = nn.predict(train_x)
             train_error = f1_score(train_y, train_predict)
