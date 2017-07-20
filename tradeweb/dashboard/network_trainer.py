@@ -17,11 +17,15 @@ from sklearn.svm import SVC
 
 logger = logging.getLogger(__name__)
 
+ticker_data = ['btcbtcusd', 'bitstampbtcusd']
+frame_length = 10
+total_features = 12
 
-def find_buy_points():
+
+def find_buy_points(ticker):
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    ticks = db.btcebtcusd_1T.find(
+    ticks = db[ticker + '_1T'].find(
         {'time': {'$gte': datetime.datetime(2013, 1, 1), '$lt': datetime.datetime(2017, 3, 5)}}).sort([('time', 1)])
     df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
     df = df.set_index(['time'])
@@ -71,20 +75,18 @@ def find_buy_points():
             print('Importing point #%s' % i)
 
         price = df.loc[point[0]]['close']
-        db['btcebtcusd_points_train'].insert_one(
+        db[ticker + '_points_train'].insert_one(
             {'time': point[0], 'price': price, 'type': 'positive', 'resolution': '1T', 'max_change': point[1],
              'max_change_index': point[2], 'min_change': point[3], 'min_change_index': point[4]})
 
 
-def prepare_data():
-    frame_length = 10
-
+def prepare_data(ticker):
     print('Loading data...')
 
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
     date_filter = {'$gte': datetime.datetime(2014, 1, 1), '$lt': datetime.datetime(2017, 3, 1)}
-    ticks = db.btcebtcusd_1T.find(
+    ticks = db[ticker + '_1T'].find(
         {'time': date_filter}).sort([('time', 1)])
     df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
     df = df.set_index(['time'])
@@ -94,23 +96,20 @@ def prepare_data():
 
     # df = df.dropna(0)
 
-    point_ticks = db.btcebtcusd_points_train.find({'time': date_filter},
-                                                  {'time': 1, 'price': 1, 'max_change': 1, 'max_change_index': 1,
-                                                   'min_change': 1, 'min_change_index': 1, '_id': 0}).sort(
+    point_ticks = db[ticker + '_points_train'].find({'time': date_filter},
+                                                    {'time': 1, 'price': 1, 'max_change': 1, 'max_change_index': 1,
+                                                     'min_change': 1, 'min_change_index': 1, '_id': 0}).sort(
         [('time', 1)])
     points = list(point_ticks)
 
-    sample_size = 3
     sample = points
-    # positive_sample = random.sample(points_positive, 5)
-    # negative_sample = random.sample(points_negative, 15)
 
     skip_items = 135
     lines_in_shard = 1000
     shards = split_in_shards(df, frame_length, lines_in_shard)
 
     print('Creating frames...')
-    total_features = 12
+
     total_x = len(sample)
     print('Total amount of frames: %s' % total_x)
     y = np.empty([total_x - skip_items])
@@ -157,9 +156,8 @@ def prepare_data():
         except ValueError:
             print('Da fuq')
 
-
-    np.save('network_data_x.npy', x)
-    np.save('network_data_y.npy', y)
+    np.save(ticker + '_data_x.npy', x)
+    np.save(ticker + '_data_y.npy', y)
 
     # poly = preprocessing.PolynomialFeatures(2)
     # x = poly.fit_transform(x)
@@ -260,12 +258,17 @@ def repeat_training_network():
 
 
 def find_regularization():
-    x = np.load('network_data_x.npy')
-    y = np.load('network_data_y.npy')
+    x = np.empty((0, total_features * frame_length))
+    y = np.empty((0, 0))
+    for ticker in ticker_data:
+        x_ticker = np.load(ticker + '_data_x.npy')
+        y_ticker = np.load(ticker + '_data_y.npy')
 
-    print('Normalizing...')
-    # попробовать скейлить этих ребят отдельно
-    x = preprocessing.scale(x)
+        print('Normalizing...')
+        x_ticker = preprocessing.scale(x_ticker)
+
+        x = np.concatenate((x, x_ticker))
+        y = np.concatenate((y, y_ticker))
 
     print('Training network...')
     train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.1)
@@ -322,8 +325,8 @@ def calculate_indicators(df):
     df_stock['rsi_7_30.0_le_10_c']
     df_stock['boll']
     df_stock['boll_lb']
-    df_stock['boll_close'] = np.log(df_stock['boll']/df_stock['close'])
-    df_stock['boll_lb_close'] = np.log(df_stock['boll_lb']/df_stock['close'])
+    df_stock['boll_close'] = np.log(df_stock['boll'] / df_stock['close'])
+    df_stock['boll_lb_close'] = np.log(df_stock['boll_lb'] / df_stock['close'])
 
     df_stock.loc[df_stock['rsi_7'] <= 30, 'rsi_buy'] = 1
     df_stock.loc[df_stock['rsi_7'] > 30, 'rsi_buy'] = 0
@@ -346,7 +349,7 @@ def calculate_indicators(df):
 def import_resampled_data(filename, database_name, period):
     print('Loading CSV file...')
     df = pd.read_csv(filename, header=None, sep=",", names=['time', 'last', 'volume'],
-                         parse_dates=True, date_parser=dateparse, index_col=0)
+                     parse_dates=True, date_parser=dateparse, index_col=0)
     print('Resampling data...')
     df['last'] = pd.to_numeric(df['last']).bfill()
     df['volume'] = pd.to_numeric(df['volume']).bfill()
@@ -406,12 +409,12 @@ if __name__ == '__main__':
     # print('Min error = %s' % min_error)
     # print('Alpha=%s, i1=%s, i2=%s, i3=%s' % (min_params[0], min_params[1], min_params[2], min_params[3]))
 
-    # prepare_data()
+    prepare_data('bitstampbtcusd')
     # repeat_training_network()
     # find_buy_points()
-    # find_regularization()
-    periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
-    for period in periods:
-        import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
+    find_regularization()
+    # periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
+    # for period in periods:
+    #     import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
 
     logger.info("finished event profiler process")

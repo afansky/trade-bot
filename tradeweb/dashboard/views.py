@@ -15,6 +15,8 @@ from sklearn.neural_network import MLPClassifier
 from sklearn import preprocessing
 import math
 
+# database_name = 'btcebtcusd'
+database_name = 'bitstampbtcusd'
 points_collection = 'btcebtcusd_points_auto'
 
 # Create your views here.
@@ -32,38 +34,6 @@ def index(request):
     template = loader.get_template('dashboard/index.html')
     context = {'chart': chart}
     return HttpResponse(template.render(context, request))
-
-
-@api_view(['GET'])
-@renderer_classes((JSONRenderer,))
-def series_old(request, format=None):
-    """
-    A view that returns the count of active users in JSON.
-    """
-
-    client = MongoClient("mongodb://localhost:27017")
-    db = client.bitcoinbot
-    ticks = db.btcebtcusd.find({}).sort([('_id', -1)]).limit(50000)
-
-    df = pd.DataFrame.from_records(list(ticks), columns=['time', 'last', 'volume'])
-    df = df.set_index(['time'])
-
-    price = df.resample('10T', how={'last': 'ohlc'})
-    volume = df.resample('10T', how={'volume': 'sum'})
-    volume.columns = pd.MultiIndex.from_tuples([('volume', 'sum')])
-    df = pd.concat([price, volume], axis=1)
-    # for i, row in df.iterrows():
-    #     response.append([int(time.mktime(i.timetuple())) * 1000, row['last'], row['volume']])
-
-    # df = pd.DataFrame(list(ticks), index=['time'], columns=['last', 'volume']).resample('1T', how='ohlc')
-
-    response = []
-    for i, row in df.iterrows():
-        response.append(
-            [int(time.mktime(i.timetuple())) * 1000, row['last']['open'], row['last']['high'], row['last']['low'],
-             row['last']['close'], row['volume']['sum']])
-
-    return Response(response)
 
 
 @api_view(['POST'])
@@ -121,7 +91,7 @@ def series(request):
         resolution = '3d'
         resolution_second = 60 * 60 * 24 * 3
 
-    ticks = db['btcebtcusd_' + resolution].find(
+    ticks = db[database_name + '_' + resolution].find(
         {'time': {'$lt': end, '$gte': start - datetime.timedelta(seconds=35 * resolution_second)}}).sort([('_id', 1)])
 
     df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
@@ -153,69 +123,6 @@ def series(request):
     return Response(response)
 
 
-def train_network():
-    frame_length = 20
-
-    client = MongoClient("mongodb://localhost:27017")
-    db = client.bitcoinbot
-    ticks = db.btcebtcusd_3T.find({'time': {'$gte': datetime.datetime(2017, 4, 1)}}).sort([('time', 1)])
-    df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
-    df = df.set_index(['time'])
-    df = df.bfill()
-    calculate_indicators(df)
-
-    point_ticks_positive = db[points_collection].find({'type': 'positive'}, {'time': 1, 'price': 1, '_id': 0})
-    point_ticks_negative = db[points_collection].find({'type': 'negative'}, {'time': 1, 'price': 1, '_id': 0})
-    points_positive = list(point_ticks_positive)
-    points_negative = list(point_ticks_negative)
-
-    positive_frames = []
-    for point in points_positive:
-        point_frame = df.loc[:point['time']].tail(frame_length)
-        positive_frames.append(point_frame)
-
-    negative_frames = []
-    for point in points_negative:
-        point_frame = df.loc[:point['time']].tail(frame_length)
-        negative_frames.append(point_frame)
-
-    all_frames = positive_frames + negative_frames
-    positive_length = len(positive_frames)
-    total_x = len(all_frames)
-
-    total_features = 10
-
-    x = np.empty([total_x, frame_length * total_features])
-    y = np.empty(total_x)
-    for i, c in enumerate(all_frames):
-        if i < positive_length:
-            y[i] = 1
-        else:
-            y[i] = 0
-
-        x[i, :] = np.nan_to_num(np.concatenate((
-            c['open'].values,
-            c['high'].values,
-            c['low'].values,
-            c['close'].values,
-            c['volume'].values,
-            c['ma_7'].values,
-            c['ma_25'].values,
-            c['rsi_7'].values,
-            c['bb_up'].values,
-            c['bb_down'].values
-        )))
-
-    x = preprocessing.normalize(x)
-    nn = MLPClassifier(alpha=1e-3,
-                           hidden_layer_sizes=(175, 175, 175, 175, 175, 175), activation='logistic')
-
-    nn.fit(x, y)
-
-    result = nn.predict(x)
-    return result
-
-
 def calculate_indicators(df):
     df_stock = ss.StockDataFrame.retype(df)
     df_stock['rsi_7']
@@ -227,7 +134,6 @@ def calculate_indicators(df):
     df['ma_7'] = df['close'].rolling(window=7).mean().bfill()
     df['ma_25'] = df['close'].rolling(window=25).mean().bfill()
 
-    df['rsi'] = rsi(df['close'])
     ma_35 = df['close'].rolling(window=35).mean().bfill()
     std_35 = pd.rolling_std(df['close'], window=35).bfill()
     df['bb_up'] = ma_35 + (std_35 * 2)
@@ -239,8 +145,8 @@ def calculate_indicators(df):
 def init(request):
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    end = db.btcebtcusd_2h.find({}, {'time': 1, '_id': 0}).sort([('time', -1)]).limit(1).next()['time']
-    start = db.btcebtcusd_2h.find({}, {'time': 1, '_id': 0}).sort([('time', 1)]).limit(1).next()['time']
+    end = db[database_name + "_2h"].find({}, {'time': 1, '_id': 0}).sort([('time', -1)]).limit(1).next()['time']
+    start = db[database_name + "_2h"].find({}, {'time': 1, '_id': 0}).sort([('time', 1)]).limit(1).next()['time']
     response = {'start': time.mktime(start.timetuple()) * 1000, 'end': time.mktime(end.timetuple()) * 1000}
     return Response(response)
 
@@ -270,7 +176,7 @@ def add_point(request):
     point_resolution = request.POST['resolution']
     client = MongoClient("mongodb://localhost:27017")
     db = client.bitcoinbot
-    tick = db['btcebtcusd_' + point_resolution].find_one({'time': point_time})
+    tick = db[database_name + '_' + point_resolution].find_one({'time': point_time})
 
     point_type = request.POST['type']
     success = False
@@ -304,10 +210,4 @@ def rsi(df):
     rs_value = average_gain / average_loss
     rsi_result = 100.0 - (100.0 / (1.0 + rs_value))
     rsi_result = rsi_result.bfill()
-    return rsi_result
-
-
-@api_view(['GET'])
-@renderer_classes((JSONRenderer,))
-def train(request):
-    return Response(train_network())
+    return rsi_result8

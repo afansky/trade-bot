@@ -74,7 +74,7 @@
         var chart = Highcharts.charts[0];
 
         chart.showLoading('Loading data from server...');
-        $.post("http://localhost:8000/dashboard/series/", {
+        $.post("series/", {
             start: Math.round(e.min),
             end: Math.round(e.max)
         }, function (response, textStatus) {
@@ -193,7 +193,7 @@
     }
 
     function updateSelectedPoints() {
-        $.getJSON('http://localhost:8000/dashboard/points/', function (data) {
+        $.getJSON('points/', function (data) {
             $("#point-table").find("> tbody").empty();
             let chart = Highcharts.charts[0];
 
@@ -240,7 +240,7 @@
     }
 
     function removePoint(point) {
-        $.post('http://localhost:8000/dashboard/removePoint/', {
+        $.post('removePoint/', {
                 'time': point.x
             },
             function (data, message) {
@@ -257,7 +257,7 @@
     }
 
     function addPoint(point) {
-        $.post('http://localhost:8000/dashboard/addPoint/', {
+        $.post('addPoint/', {
                 'time': point.x,
                 'type': point.type,
                 'resolution': resolution
@@ -275,7 +275,7 @@
             }, "json");
     }
 
-    $.getJSON('http://localhost:8000/dashboard/init/', function (data) {
+    $.getJSON('init/', function (data) {
         var start = data.start;
         var end = data.end;
 
