@@ -14,12 +14,13 @@ import math
 import matplotlib.pyplot as plt
 import collections
 from sklearn.svm import SVC
+import gc
 
 logger = logging.getLogger(__name__)
 
-ticker_data = ['btcbtcusd', 'bitstampbtcusd']
-frame_length = 10
-total_features = 12
+ticker_data = ['btcebtcusd', 'bitstampbtcusd']
+frame_length = 20
+total_features = 20
 
 
 def find_buy_points(ticker):
@@ -149,7 +150,6 @@ def prepare_data(ticker):
                 point_frame['rsi_7'].values,
                 point_frame['rsi_14'].values,
                 point_frame['macd'].values,
-                point_frame['rsi_buy'].values,
                 point_frame['rsi_7_30.0_le_10_c'].values,
                 point_frame['rsi_14_30.0_le_10_c'].values,
                 point_frame['boll_close'].values,
@@ -268,7 +268,7 @@ def repeat_training_network():
 
 def find_regularization():
     x = np.empty((0, total_features * frame_length))
-    y = np.empty((0, 0))
+    y = np.empty((0))
     for ticker in ticker_data:
         x_ticker = np.load(ticker + '_data_x.npy')
         y_ticker = np.load(ticker + '_data_y.npy')
@@ -278,20 +278,23 @@ def find_regularization():
 
         x = np.concatenate((x, x_ticker))
         y = np.concatenate((y, y_ticker))
+        del x_ticker
+        del y_ticker
 
+    gc.collect()
     print('Training network...')
     train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.1)
     # poly = preprocessing.PolynomialFeatures(2)
     # train_x = poly.fit_transform(train_x)
 
-    alphas = [0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
+    alphas = [0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01]
     alphas_length = len(alphas)
     iterations = range(0, alphas_length)
     train_errors = np.zeros(alphas_length)
     cv_errors = np.zeros(alphas_length)
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
-        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(500, 500, 500),
+        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(180, 180),
                            activation='logistic', verbose=True, max_iter=1000)
         nn.fit(train_x, train_y)
         # clf = svm.SVC()
@@ -430,8 +433,9 @@ if __name__ == '__main__':
     # print('Min error = %s' % min_error)
     # print('Alpha=%s, i1=%s, i2=%s, i3=%s' % (min_params[0], min_params[1], min_params[2], min_params[3]))
 
-    for ticker in ticker_data:
-        prepare_data(ticker)
+#    find_buy_points('bitstampbtcusd')
+#    for ticker in ticker_data:
+#        prepare_data(ticker)
     find_regularization()
     # repeat_training_network()
     # find_buy_points()
