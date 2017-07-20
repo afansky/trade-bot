@@ -430,10 +430,11 @@ if __name__ == '__main__':
     # print('Min error = %s' % min_error)
     # print('Alpha=%s, i1=%s, i2=%s, i3=%s' % (min_params[0], min_params[1], min_params[2], min_params[3]))
 
-    #prepare_data('bitstampbtcusd')
+    for ticker in ticker_data:
+        prepare_data(ticker)
+    find_regularization()
     # repeat_training_network()
     # find_buy_points()
-     find_regularization()
     #periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
     #for period in periods:
     #    import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
