@@ -327,7 +327,7 @@ def find_incremental_regularization():
         nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(180,),
                            activation='logistic', verbose=True, max_iter=1000)
         for ticker in ticker_data:
-            print('Partial fitting for ticker %s' % ticker)
+            print('Loading data for ticker %s' % ticker)
             x_ticker = np.load(ticker + '_data_x.npy')
             y_ticker = np.load(ticker + '_data_y.npy')
 
@@ -340,7 +340,8 @@ def find_incremental_regularization():
             print('Splitting into training set and test set')
             train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.1)
 
-            nn.partial_fit(train_x, train_y, classes=np.unique(train_y))
+            for i in range(1, 100):
+                nn.partial_fit(train_x, train_y, classes=[0, 1])
 
             train_predict = nn.predict(train_x)
             train_error = f1_score(train_y, train_predict)
