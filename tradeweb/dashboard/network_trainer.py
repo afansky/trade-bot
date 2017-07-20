@@ -340,7 +340,7 @@ def find_incremental_regularization():
             print('Splitting into training set and test set')
             train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.1)
 
-            for i in range(1, 100):
+            for i_fit in range(1, 100):
                 nn.partial_fit(train_x, train_y, classes=[0, 1])
 
             train_predict = nn.predict(train_x)
@@ -355,7 +355,10 @@ def find_incremental_regularization():
             print(classification_report(test_y, test_predict))
             print(confusion_matrix(test_y, test_predict))
 
-        print('Done for ticker %s' % ticker)
+            print('Done for ticker %s' % ticker)
+
+        print('Done for alpha %s' % alpha)
+
 
     input('Press Enter')
 
