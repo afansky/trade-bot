@@ -104,7 +104,7 @@ def prepare_data(ticker):
 
     sample = points
 
-    skip_items = 135
+    skip_items = 200
     lines_in_shard = 1000
     shards = split_in_shards(df, frame_length, lines_in_shard)
 
@@ -147,9 +147,15 @@ def prepare_data(ticker):
                 point_frame['volume_delta'].values,
                 point_frame['close_7_sma_-1_r'].values,
                 point_frame['rsi_7'].values,
+                point_frame['rsi_14'].values,
+#                point_frame['cci_5'].values,
+#                point_frame['cci_5_-100.0_le_10_c'].values,
+#                point_frame['cci_14'].values,
+#                point_frame['cci_14_-100.0_le_10_c'].values,
                 point_frame['macd'].values,
                 point_frame['rsi_buy'].values,
                 point_frame['rsi_7_30.0_le_10_c'].values,
+                point_frame['rsi_14_30.0_le_10_c'].values,
                 point_frame['boll_close'].values,
                 point_frame['boll_lb_close'].values,
             )))
@@ -282,10 +288,9 @@ def find_regularization():
     cv_errors = np.zeros(alphas_length)
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
-        nn = MLPClassifier(alpha=alpha, tol=0.000001, solver='adam', hidden_layer_sizes=(200, 200),
+        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(160, 160, 160, 160),
                            activation='logistic', verbose=True, max_iter=1000)
         nn.fit(train_x, train_y)
-
         # clf = svm.SVC()
         # clf.fit(x,y)
 
@@ -323,10 +328,16 @@ def calculate_indicators(df):
     df_stock['volume_-1_r']
     df_stock['volume_delta']
     df_stock['rsi_7_30.0_le_10_c']
+    df_stock['rsi_14_30.0_le_10_c']
     df_stock['boll']
     df_stock['boll_lb']
     df_stock['boll_close'] = np.log(df_stock['boll'] / df_stock['close'])
     df_stock['boll_lb_close'] = np.log(df_stock['boll_lb'] / df_stock['close'])
+#    df_stock['rsi_14']
+#    df_stock['cci_5']
+#    df_stock['cci_14']
+#    df_stock['cci_5_-100.0_le_10_c']
+#    df_stock['cci_14_-100.0_le_10_c']
 
     df_stock.loc[df_stock['rsi_7'] <= 30, 'rsi_buy'] = 1
     df_stock.loc[df_stock['rsi_7'] > 30, 'rsi_buy'] = 0
