@@ -267,21 +267,9 @@ def repeat_training_network():
 
 
 def find_regularization():
-    x = np.empty((0, total_features * frame_length))
-    y = np.empty((0))
-    for ticker in ticker_data:
-        x_ticker = np.load(ticker + '_data_x.npy')
-        y_ticker = np.load(ticker + '_data_y.npy')
+    x = np.load('data_x.npy')
+    y = np.load('data_y.npy')
 
-        print('Normalizing...')
-        x_ticker = preprocessing.scale(x_ticker)
-
-        x = np.concatenate((x, x_ticker))
-        y = np.concatenate((y, y_ticker))
-        del x_ticker
-        del y_ticker
-
-    gc.collect()
     print('Training network...')
     train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.1)
     # poly = preprocessing.PolynomialFeatures(2)
@@ -423,6 +411,23 @@ def f1_error(y, z):
     return error
 
 
+def join_ticker_data():
+    x = np.empty((0, total_features * frame_length))
+    y = np.empty((0))
+    for ticker in ticker_data:
+        x_ticker = np.load(ticker + '_data_x.npy')
+        y_ticker = np.load(ticker + '_data_y.npy')
+
+        print('Normalizing...')
+        x_ticker = preprocessing.scale(x_ticker)
+
+        x = np.concatenate((x, x_ticker))
+        y = np.concatenate((y, y_ticker))
+
+    np.save('data_x.npy', x)
+    np.save('data_y.npy', y)
+
+
 if __name__ == '__main__':
     import logging
 
@@ -436,6 +441,7 @@ if __name__ == '__main__':
 #    find_buy_points('bitstampbtcusd')
 #    for ticker in ticker_data:
 #        prepare_data(ticker)
+    join_ticker_data()
     find_regularization()
     # repeat_training_network()
     # find_buy_points()
