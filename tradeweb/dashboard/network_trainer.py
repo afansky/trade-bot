@@ -77,7 +77,7 @@ def find_buy_points():
 
 
 def prepare_data():
-    frame_length = 20
+    frame_length = 15
 
     print('Loading data...')
 
@@ -110,7 +110,7 @@ def prepare_data():
     shards = split_in_shards(df, frame_length, lines_in_shard)
 
     print('Creating frames...')
-    total_features = 14
+    total_features = 21
     total_x = len(sample)
     print('Total amount of frames: %s' % total_x)
     y = np.empty([total_x - skip_items])
@@ -149,16 +149,19 @@ def prepare_data():
                 point_frame['close_7_sma_-1_r'].values,
                 point_frame['rsi_7'].values,
                 point_frame['rsi_14'].values,
-#                point_frame['cci_5'].values,
-#                point_frame['cci_5_-100.0_le_10_c'].values,
-#                point_frame['cci_14'].values,
-#                point_frame['cci_14_-100.0_le_10_c'].values,
                 point_frame['macd'].values,
                 point_frame['rsi_buy'].values,
                 point_frame['rsi_7_30.0_le_10_c'].values,
                 point_frame['rsi_14_30.0_le_10_c'].values,
                 point_frame['boll_close'].values,
                 point_frame['boll_lb_close'].values,
+                point_frame['rsi_21'].values,
+                point_frame['rsi_7_xu_rsi_21'].values,
+                point_frame['close_xu_boll_lb'].values,
+                point_frame['close_xu_boll'].values,
+                point_frame['close_xu_close_7_sma'].values,
+                point_frame['close_xu_close_14_sma'].values,
+                point_frame['close_7_sma_xu_close_21_sma'].values
             )))
         except ValueError:
             print('Da fuq')
@@ -278,14 +281,14 @@ def find_regularization():
     # poly = preprocessing.PolynomialFeatures(2)
     # train_x = poly.fit_transform(train_x)
 
-    alphas = [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
+    alphas = [0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
     alphas_length = len(alphas)
     iterations = range(0, alphas_length)
     train_errors = np.zeros(alphas_length)
     cv_errors = np.zeros(alphas_length)
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
-        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(160, 160, 160, 160),
+        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(500, 500, 500),
                            activation='logistic', verbose=True, max_iter=1000)
         nn.fit(train_x, train_y)
         # clf = svm.SVC()
@@ -330,7 +333,15 @@ def calculate_indicators(df):
     df_stock['boll_lb']
     df_stock['boll_close'] = np.log(df_stock['boll']/df_stock['close'])
     df_stock['boll_lb_close'] = np.log(df_stock['boll_lb']/df_stock['close'])
-#    df_stock['rsi_14']
+    df_stock['rsi_14']
+    df_stock['rsi_21']
+    df_stock['rsi_7_xu_rsi_21']
+    df_stock['close_xu_boll_lb']
+    df_stock['close_xu_boll']
+    df_stock['close_xu_close_7_sma']
+    df_stock['close_xu_close_14_sma']
+    df_stock['close_7_sma_xu_close_21_sma']
+
 #    df_stock['cci_5']
 #    df_stock['cci_14']
 #    df_stock['cci_5_-100.0_le_10_c']
@@ -417,12 +428,12 @@ if __name__ == '__main__':
     # print('Min error = %s' % min_error)
     # print('Alpha=%s, i1=%s, i2=%s, i3=%s' % (min_params[0], min_params[1], min_params[2], min_params[3]))
 
-    prepare_data()
+    #prepare_data()
     # repeat_training_network()
     # find_buy_points()
-    # find_regularization()
-    periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
-    for period in periods:
-        import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
+    find_regularization()
+    #periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
+    #for period in periods:
+    #    import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
 
     logger.info("finished event profiler process")
