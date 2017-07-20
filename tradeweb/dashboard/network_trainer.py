@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import collections
 from sklearn.svm import SVC
 import gc
+from sklearn.linear_model import SGDClassifier
 
 logger = logging.getLogger(__name__)
 
@@ -282,11 +283,11 @@ def find_regularization():
     cv_errors = np.zeros(alphas_length)
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
-        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(180, 180),
-                           activation='logistic', verbose=True, max_iter=1000)
-        nn.fit(train_x, train_y)
-        # clf = svm.SVC()
-        # clf.fit(x,y)
+        # nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(180, 180),
+        #                    activation='logistic', verbose=True, max_iter=1000)
+        # nn.fit(train_x, train_y)
+        nn = SGDClassifier(alpha=alpha)
+        nn.fit(x, y)
 
         train_predict = nn.predict(train_x)
         train_error = f1_score(train_y, train_predict)
