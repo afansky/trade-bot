@@ -311,6 +311,54 @@ def find_regularization():
     input('Press Enter')
 
 
+def find_incremental_regularization():
+    print('Training network...')
+
+    # poly = preprocessing.PolynomialFeatures(2)
+    # train_x = poly.fit_transform(train_x)
+
+    alphas = [0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01]
+    alphas_length = len(alphas)
+    iterations = range(0, alphas_length)
+    train_errors = np.zeros(alphas_length)
+    cv_errors = np.zeros(alphas_length)
+    for i, alpha in enumerate(alphas):
+        print('Training network for alpha=%s' % alpha)
+        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(180,),
+                           activation='logistic', verbose=True, max_iter=1000)
+        for ticker in ticker_data:
+            print('Partial fitting for ticker %s' % ticker)
+            x_ticker = np.load(ticker + '_data_x.npy')
+            y_ticker = np.load(ticker + '_data_y.npy')
+
+            print('Normalizing...')
+            x_ticker = preprocessing.scale(x_ticker)
+
+            x = x_ticker
+            y = y_ticker
+
+            print('Splitting into training set and test set')
+            train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.1)
+
+            nn.partial_fit(train_x, train_y)
+
+            train_predict = nn.predict(train_x)
+            train_error = f1_score(train_y, train_predict)
+            print('Train set error: %s' % train_error)
+            train_errors[i] = train_error
+            print(classification_report(train_y, train_predict))
+            print(confusion_matrix(train_y, train_predict))
+
+            test_predict = nn.predict(test_x)
+            print('Test set error: %s' % f1_score(test_y, test_predict))
+            print(classification_report(test_y, test_predict))
+            print(confusion_matrix(test_y, test_predict))
+
+        print('Done for ticker %s' % ticker)
+
+    input('Press Enter')
+
+
 def calculate_indicators(df):
     df_stock = ss.StockDataFrame.retype(df)
     df_stock['rsi_7']
@@ -442,8 +490,7 @@ if __name__ == '__main__':
 #    find_buy_points('bitstampbtcusd')
 #    for ticker in ticker_data:
 #        prepare_data(ticker)
-    join_ticker_data()
-    find_regularization()
+    find_incremental_regularization()
     # repeat_training_network()
     # find_buy_points()
     #periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
