@@ -296,7 +296,7 @@
             Highcharts.charts[0].xAxis[0].setExtremes(extremes.dataMin + avg, extremes.dataMax + avg);
         });
 
-        $.post("http://localhost:8000/dashboard/series/", {
+        $.post("series/", {
             start: start,
             end: end
         }, function (response, textStatus) {
