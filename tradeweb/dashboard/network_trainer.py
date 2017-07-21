@@ -19,7 +19,7 @@ from sklearn.linear_model import SGDClassifier
 
 logger = logging.getLogger(__name__)
 
-ticker_data = ['btcebtcusd', 'bitstampbtcusd']
+ticker_data = ['btcebtcusd', 'bitstampbtcusd', 'btcnbtccny']
 frame_length = 20
 total_features = 20
 
@@ -142,11 +142,11 @@ def prepare_data(ticker):
         try:
             y[i - skip_items] = buy_point
             x[i - skip_items, :] = np.nan_to_num(np.concatenate((
-                point_frame['open_-1_r'].values,
-                point_frame['high_-1_r'].values,
-                point_frame['low_-1_r'].values,
-                point_frame['close_-1_r'].values,
-                point_frame['volume_delta'].values,
+                point_frame['open_lr'].values,
+                point_frame['high_lr'].values,
+                point_frame['low_lr'].values,
+                point_frame['close_lr'].values,
+                point_frame['volume_lr'].values,
                 point_frame['close_7_sma_-1_r'].values,
                 point_frame['rsi_7'].values,
                 point_frame['rsi_14'].values,
@@ -368,12 +368,11 @@ def calculate_indicators(df):
     df_stock['rsi_7']
     df_stock['macd']
     df_stock['close_7_sma_-1_r']
-    df_stock['open_-1_r']
-    df_stock['close_-1_r']
-    df_stock['high_-1_r']
-    df_stock['low_-1_r']
-    df_stock['volume_-1_r']
-    df_stock['volume_delta']
+    df_stock['open_lr'] = np.log(df_stock['open'] / df_stock['open_-1_s'])
+    df_stock['close_lr'] = np.log(df_stock['close'] / df_stock['close_-1_s'])
+    df_stock['high_lr'] = np.log(df_stock['high'] / df_stock['high_-1_s'])
+    df_stock['low_lr'] = np.log(df_stock['low'] / df_stock['low_-1_s'])
+    df_stock['volume_lr'] = np.log(df_stock['volume'] / df_stock['volume_-1_s'])
     df_stock['rsi_7_30.0_le_10_c']
     df_stock['rsi_14_30.0_le_10_c']
     df_stock['boll']
@@ -492,13 +491,16 @@ if __name__ == '__main__':
     # print('Alpha=%s, i1=%s, i2=%s, i3=%s' % (min_params[0], min_params[1], min_params[2], min_params[3]))
 
 #    find_buy_points('bitstampbtcusd')
-#    for ticker in ticker_data:
-#        prepare_data(ticker)
+    #for ticker in ticker_data:
+#    periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
+#    for period in periods:
+#        import_resampled_data('../../../data/btcnCNY.csv', 'btcnbtccny', period)
+#    find_buy_points('btcnbtccny')
+    prepare_data('btcnbtccny')
     find_incremental_regularization()
     # repeat_training_network()
     # find_buy_points()
     #periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
     #for period in periods:
     #    import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
-
     logger.info("finished event profiler process")
