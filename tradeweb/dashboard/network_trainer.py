@@ -324,23 +324,22 @@ def find_incremental_regularization():
     cv_errors = np.zeros(alphas_length)
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
-        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(180,),
+        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(350,),
                            activation='logistic', verbose=True, max_iter=1000)
         for ticker in ticker_data:
             print('Loading data for ticker %s' % ticker)
             x_ticker = np.load(ticker + '_data_x.npy')
             y_ticker = np.load(ticker + '_data_y.npy')
 
-            print('Normalizing...')
-            x_ticker = preprocessing.scale(x_ticker)
-
-            x = x_ticker
-            y = y_ticker
-
             print('Splitting into training set and test set')
-            train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.1)
+            train_x, test_x, train_y, test_y = train_test_split(x_ticker, y_ticker, test_size=0.2)
 
-            for i_fit in range(1, 100):
+            print('Scaling features')
+            scaler = preprocessing.StandardScaler()
+            train_x = scaler.fit_transform(train_x)
+            test_x = scaler.transform(test_x)
+
+            for i_fit in range(1, 35):
                 nn.partial_fit(train_x, train_y, classes=[0, 1])
 
             train_predict = nn.predict(train_x)
@@ -496,7 +495,7 @@ if __name__ == '__main__':
 #    for period in periods:
 #        import_resampled_data('../../../data/btcnCNY.csv', 'btcnbtccny', period)
 #    find_buy_points('btcnbtccny')
-    prepare_data('btcnbtccny')
+#     prepare_data('btcnbtccny')
     find_incremental_regularization()
     # repeat_training_network()
     # find_buy_points()
