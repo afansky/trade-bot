@@ -8,7 +8,7 @@ import logging
 import stockstats as ss
 import random
 from sklearn import svm
-from sklearn.metrics import mean_squared_error, f1_score, classification_report, confusion_matrix
+from sklearn.metrics import mean_squared_error, f1_score, classification_report, confusion_matrix, precision_recall_curve
 from sklearn.model_selection import train_test_split, cross_val_score
 import math
 import matplotlib.pyplot as plt
@@ -19,8 +19,9 @@ from sklearn.linear_model import SGDClassifier
 
 logger = logging.getLogger(__name__)
 
-ticker_data = ['btcebtcusd', 'bitstampbtcusd', 'btcnbtccny']
-frame_length = 20
+ticker_data = ['btcebtcusd', 'bitstampbtcusd']
+# ticker_data = ['btcebtcusd']
+frame_length = 25
 total_features = 20
 
 
@@ -134,7 +135,7 @@ def prepare_data(ticker):
 
         max_change = float(point['max_change'] * 100)
         min_change = float(abs(point['min_change']) * 100)
-        if max_change >= 0.31 and min_change <= 0.12:
+        if max_change >= 0.45:
             buy_point = 1
         else:
             buy_point = 0
@@ -165,6 +166,8 @@ def prepare_data(ticker):
             )))
         except ValueError:
             print('Da fuq')
+
+    print('Found %s buy points from %s samples' % (np.count_nonzero(y), len(sample)))
 
     np.save(ticker + '_data_x.npy', x)
     np.save(ticker + '_data_y.npy', y)
@@ -321,11 +324,14 @@ def find_incremental_regularization():
     alphas_length = len(alphas)
     iterations = range(0, alphas_length)
     train_errors = np.zeros(alphas_length)
+    test_errors = np.zeros(alphas_length)
     cv_errors = np.zeros(alphas_length)
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
-        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(350,),
+        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(550,),
                            activation='logistic', verbose=True, max_iter=1000)
+        test_data = {}
+        precision_recall_curve_results = np.empty(shape=(len(ticker_data), 3))
         for ticker in ticker_data:
             print('Loading data for ticker %s' % ticker)
             x_ticker = np.load(ticker + '_data_x.npy')
@@ -339,6 +345,8 @@ def find_incremental_regularization():
             train_x = scaler.fit_transform(train_x)
             test_x = scaler.transform(test_x)
 
+            test_data[ticker] = (test_x, test_y)
+
             for i_fit in range(1, 35):
                 nn.partial_fit(train_x, train_y, classes=[0, 1])
 
@@ -348,14 +356,21 @@ def find_incremental_regularization():
             train_errors[i] = train_error
             print(classification_report(train_y, train_predict))
             print(confusion_matrix(train_y, train_predict))
+            print('Done for ticker %s' % ticker)
 
+        for ticker_i, ticker in enumerate(ticker_data):
+            print('Running predictions on the test set from ticker %s' % ticker)
+            (test_x, test_y) = test_data[ticker][0]
             test_predict = nn.predict(test_x)
+            test_predict_proba = nn.predict_proba(test_x)
             print('Test set error: %s' % f1_score(test_y, test_predict))
             print(classification_report(test_y, test_predict))
             print(confusion_matrix(test_y, test_predict))
+            precision, recall, thresholds = precision_recall_curve(test_y, test_predict_proba)
+            print('Precision, recall, threshold arrays:')
+            precision_recall_curve_results[ticker_i, :] = [precision, recall, thresholds]
 
-            print('Done for ticker %s' % ticker)
-
+        np.save('prc_results_%s.npy' % alpha, precision_recall_curve_results)
         print('Done for alpha %s' % alpha)
 
 
@@ -488,6 +503,7 @@ if __name__ == '__main__':
     # min_error, min_params = train_network()
     # print('Min error = %s' % min_error)
     # print('Alpha=%s, i1=%s, i2=%s, i3=%s' % (min_params[0], min_params[1], min_params[2], min_params[3]))
+    # prepare_data('btcebtcusd')
 
 #    find_buy_points('bitstampbtcusd')
     #for ticker in ticker_data:
@@ -496,6 +512,8 @@ if __name__ == '__main__':
 #        import_resampled_data('../../../data/btcnCNY.csv', 'btcnbtccny', period)
 #    find_buy_points('btcnbtccny')
 #     prepare_data('btcnbtccny')
+    for ticker in ticker_data:
+        prepare_data(ticker)
     find_incremental_regularization()
     # repeat_training_network()
     # find_buy_points()
