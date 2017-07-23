@@ -360,7 +360,7 @@ def find_incremental_regularization():
 
         for ticker_i, ticker in enumerate(ticker_data):
             print('Running predictions on the test set from ticker %s' % ticker)
-            (test_x, test_y) = test_data[ticker][0]
+            (test_x, test_y) = test_data[ticker]
             test_predict = nn.predict(test_x)
             test_predict_proba = nn.predict_proba(test_x)
             print('Test set error: %s' % f1_score(test_y, test_predict))
@@ -512,8 +512,8 @@ if __name__ == '__main__':
 #        import_resampled_data('../../../data/btcnCNY.csv', 'btcnbtccny', period)
 #    find_buy_points('btcnbtccny')
 #     prepare_data('btcnbtccny')
-    for ticker in ticker_data:
-        prepare_data(ticker)
+#     for ticker in ticker_data:
+#         prepare_data(ticker)
     find_incremental_regularization()
     # repeat_training_network()
     # find_buy_points()
