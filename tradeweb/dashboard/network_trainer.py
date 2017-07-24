@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 ticker_data = ['btcebtcusd', 'bitstampbtcusd']
 # ticker_data = ['btcebtcusd']
-frame_length = 25
+frame_length = 10
 total_features = 20
 
 
@@ -328,10 +328,9 @@ def find_incremental_regularization():
     cv_errors = np.zeros(alphas_length)
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
-        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(550,),
+        nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(350,),
                            activation='logistic', verbose=True, max_iter=1000)
         test_data = {}
-        precision_recall_curve_results = np.empty(shape=(len(ticker_data), 3))
         for ticker in ticker_data:
             print('Loading data for ticker %s' % ticker)
             x_ticker = np.load(ticker + '_data_x.npy')
@@ -347,7 +346,7 @@ def find_incremental_regularization():
 
             test_data[ticker] = (test_x, test_y)
 
-            for i_fit in range(1, 35):
+            for i_fit in range(1, 7):
                 nn.partial_fit(train_x, train_y, classes=[0, 1])
 
             train_predict = nn.predict(train_x)
@@ -362,15 +361,17 @@ def find_incremental_regularization():
             print('Running predictions on the test set from ticker %s' % ticker)
             (test_x, test_y) = test_data[ticker]
             test_predict = nn.predict(test_x)
-            test_predict_proba = nn.predict_proba(test_x)
+            test_predict_proba = nn.predict_proba(test_x)[:, 1] #predictions for class=1 only
             print('Test set error: %s' % f1_score(test_y, test_predict))
             print(classification_report(test_y, test_predict))
             print(confusion_matrix(test_y, test_predict))
+            print('Test_y length is %s, test_predict_proba length is %s' % ((test_y.shape,), (test_predict_proba.shape,)))
             precision, recall, thresholds = precision_recall_curve(test_y, test_predict_proba)
-            print('Precision, recall, threshold arrays:')
-            precision_recall_curve_results[ticker_i, :] = [precision, recall, thresholds]
+            print('Saving Precision, recall, threshold arrays...')
+            np.save('prc/prc_precision_%s_%s.npy' % (alpha, ticker), precision)
+            np.save('prc/prc_recall_%s_%s.npy' % (alpha, ticker), recall)
+            np.save('prc/prc_thresholds_%s_%s.npy' % (alpha, ticker), thresholds)
 
-        np.save('prc_results_%s.npy' % alpha, precision_recall_curve_results)
         print('Done for alpha %s' % alpha)
 
 
@@ -512,8 +513,8 @@ if __name__ == '__main__':
 #        import_resampled_data('../../../data/btcnCNY.csv', 'btcnbtccny', period)
 #    find_buy_points('btcnbtccny')
 #     prepare_data('btcnbtccny')
-#     for ticker in ticker_data:
-#         prepare_data(ticker)
+    for ticker in ticker_data:
+        prepare_data(ticker)
     find_incremental_regularization()
     # repeat_training_network()
     # find_buy_points()
