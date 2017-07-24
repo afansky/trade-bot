@@ -494,6 +494,28 @@ def join_ticker_data():
     np.save('data_y.npy', y)
 
 
+def show_prc():
+    tickers = ['btcebtcusd', 'bitstampbtcusd']
+    alphas = [0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01]
+
+    for ticker in tickers:
+        for alpha in alphas:
+            precision = np.load("prc/prc_precision_%s_%s.npy" % (alpha, ticker))
+            recall = np.load("prc/prc_recall_%s_%s.npy" % (alpha, ticker))
+
+            # Plot Precision-Recall curve
+            plt.clf()
+            plt.plot(recall, precision, lw=2, color='navy',
+                     label='Precision-Recall curve')
+            plt.xlabel('Recall')
+            plt.ylabel('Precision')
+            plt.ylim([0.0, 1.05])
+            plt.xlim([0.0, 1.0])
+            plt.title('Precision-Recall')
+            plt.legend(loc="lower left")
+            plt.savefig('plot_%s_%s.png' % (alpha, ticker))
+
+
 if __name__ == '__main__':
     import logging
 
@@ -514,10 +536,12 @@ if __name__ == '__main__':
 #     prepare_data('btcnbtccny')
 #     for ticker in ticker_data:
 #         prepare_data(ticker)
-    find_incremental_regularization()
+#     find_incremental_regularization()
     # repeat_training_network()
     # find_buy_points()
     #periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
     #for period in periods:
     #    import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
+
+    show_prc()
     logger.info("finished event profiler process")
