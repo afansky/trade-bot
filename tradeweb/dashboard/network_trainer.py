@@ -329,12 +329,12 @@ def find_incremental_regularization():
     for i, alpha in enumerate(alphas):
         print('Training network for alpha=%s' % alpha)
         nn = MLPClassifier(alpha=alpha, tol=0.0001, solver='adam', hidden_layer_sizes=(350,),
-                           activation='logistic', verbose=True, max_iter=1000)
+                           activation='logistic', verbose=True, max_iter=1000, warm_start=True)
         test_data = {}
-        for ticker in ticker_data:
-            print('Loading data for ticker %s' % ticker)
-            x_ticker = np.load(ticker + '_data_x.npy')
-            y_ticker = np.load(ticker + '_data_y.npy')
+        for current_ticker in ticker_data:
+            print('Loading data for ticker %s' % current_ticker)
+            x_ticker = np.load(current_ticker + '_data_x.npy')
+            y_ticker = np.load(current_ticker + '_data_y.npy')
 
             print('Splitting into training set and test set')
             train_x, test_x, train_y, test_y = train_test_split(x_ticker, y_ticker, test_size=0.2)
@@ -344,10 +344,9 @@ def find_incremental_regularization():
             train_x = scaler.fit_transform(train_x)
             test_x = scaler.transform(test_x)
 
-            test_data[ticker] = (test_x, test_y)
+            test_data[current_ticker] = (test_x, test_y)
 
-            for i_fit in range(1, 7):
-                nn.partial_fit(train_x, train_y, classes=[0, 1])
+            nn.fit(train_x, train_y)
 
             train_predict = nn.predict(train_x)
             train_error = f1_score(train_y, train_predict)
@@ -355,11 +354,11 @@ def find_incremental_regularization():
             train_errors[i] = train_error
             print(classification_report(train_y, train_predict))
             print(confusion_matrix(train_y, train_predict))
-            print('Done for ticker %s' % ticker)
+            print('Done for ticker %s' % current_ticker)
 
-        for ticker_i, ticker in enumerate(ticker_data):
-            print('Running predictions on the test set from ticker %s' % ticker)
-            (test_x, test_y) = test_data[ticker]
+        for ticker_i, current_ticker in enumerate(ticker_data):
+            print('Running predictions on the test set from ticker %s' % current_ticker)
+            (test_x, test_y) = test_data[current_ticker]
             test_predict = nn.predict(test_x)
             test_predict_proba = nn.predict_proba(test_x)[:, 1] #predictions for class=1 only
             print('Test set error: %s' % f1_score(test_y, test_predict))
@@ -368,12 +367,11 @@ def find_incremental_regularization():
             print('Test_y length is %s, test_predict_proba length is %s' % ((test_y.shape,), (test_predict_proba.shape,)))
             precision, recall, thresholds = precision_recall_curve(test_y, test_predict_proba)
             print('Saving Precision, recall, threshold arrays...')
-            np.save('prc/prc_precision_%s_%s.npy' % (alpha, ticker), precision)
-            np.save('prc/prc_recall_%s_%s.npy' % (alpha, ticker), recall)
-            np.save('prc/prc_thresholds_%s_%s.npy' % (alpha, ticker), thresholds)
+            np.save('prc/prc_precision_%s_%s.npy' % (alpha, current_ticker), precision)
+            np.save('prc/prc_recall_%s_%s.npy' % (alpha, current_ticker), recall)
+            np.save('prc/prc_thresholds_%s_%s.npy' % (alpha, current_ticker), thresholds)
 
         print('Done for alpha %s' % alpha)
-
 
     input('Press Enter')
 
@@ -499,22 +497,23 @@ def show_prc():
     tickers = ['btcebtcusd', 'bitstampbtcusd']
     alphas = [0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01]
 
-    for ticker in tickers:
-        for alpha in alphas:
+    for alpha in alphas:
+        plt.clf()
+        for ticker in tickers:
             precision = np.load("prc/prc_precision_%s_%s.npy" % (alpha, ticker))
             recall = np.load("prc/prc_recall_%s_%s.npy" % (alpha, ticker))
 
             # Plot Precision-Recall curve
-            plt.clf()
             plt.plot(recall, precision, lw=2, color='navy',
                      label='Precision-Recall curve')
-            plt.xlabel('Recall')
-            plt.ylabel('Precision')
-            plt.ylim([0.0, 1.05])
-            plt.xlim([0.0, 1.0])
-            plt.title('Precision-Recall')
-            plt.legend(loc="lower left")
-            plt.savefig('plot_%s_%s.png' % (alpha, ticker))
+
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.ylim([0.0, 1.05])
+        plt.xlim([0.0, 1.0])
+        plt.title('Precision-Recall')
+        plt.legend(loc="lower left")
+        plt.savefig('plot_%s.png' % alpha)
 
 
 if __name__ == '__main__':
@@ -535,8 +534,8 @@ if __name__ == '__main__':
 #        import_resampled_data('../../../data/btcnCNY.csv', 'btcnbtccny', period)
 #    find_buy_points('btcnbtccny')
 #     prepare_data('btcnbtccny')
-    for ticker in ticker_data:
-        prepare_data(ticker)
+#     for ticker in ticker_data:
+#         prepare_data(ticker)
     find_incremental_regularization()
     # repeat_training_network()
     # find_buy_points()
@@ -544,5 +543,5 @@ if __name__ == '__main__':
     #for period in periods:
     #    import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
 
-    show_prc()
+    # show_prc()
     logger.info("finished event profiler process")
