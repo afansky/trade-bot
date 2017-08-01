@@ -20,8 +20,8 @@ from sklearn.linear_model import SGDClassifier
 
 logger = logging.getLogger(__name__)
 
-ticker_data = ['btcebtcusd', 'bitstampbtcusd']
-# ticker_data = ['btcebtcusd']
+# ticker_data = ['btcebtcusd', 'bitstampbtcusd']
+ticker_data = ['btcebtcusd']
 frame_length = 12
 total_features = 20
 
@@ -336,7 +336,7 @@ def generate_artificial_data(x, y):
 
     print('new_samples shape is %s and %s' % (new_samples.shape[0], new_samples.shape[1]))
     all_x = np.concatenate((x, new_samples))
-    all_y = np.concatenate((y, np.ones(len(new_samples), dtype=np.dtype('int64'))))
+    all_y = np.concatenate((np.int64(y), np.ones(len(new_samples), dtype=np.dtype('int64'))))
 
     bincount = np.bincount(all_y)
     print('Final list has %s positive and %s negative samples' % (bincount[0], bincount[1]))
