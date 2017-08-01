@@ -329,7 +329,7 @@ def generate_artificial_data(x, y):
     new_samples = np.empty(shape=(len(positive_x) * artificial_n, input_length))
 
     for sample_i, sample in enumerate(positive_x):
-        for art_i in (0, artificial_n):
+        for art_i in (0, artificial_n - 1):
             new_sample = np.empty(input_length)
             for i in range(0, total_features - 1):
                 new_sample[i] = sample[i] + sample[i] * random.uniform(-0.02, 0.02)
