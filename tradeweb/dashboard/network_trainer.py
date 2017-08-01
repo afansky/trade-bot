@@ -323,14 +323,18 @@ def generate_artificial_data(x, y):
 
     print('Found %s positive and %s negative samples' % (len(positive_x), len(negative_x)))
 
+    artificial_n = 5
+
     input_length = frame_length * total_features
-    new_samples = np.empty(shape=(len(positive_x), input_length))
+    new_samples = np.empty(shape=(len(positive_x) * artificial_n, input_length))
 
     for sample_i, sample in enumerate(positive_x):
-        new_sample = np.empty(input_length)
-        for i in range(0, total_features - 1):
-            new_sample[i] = sample[i] + sample[i] * random.uniform(-0.02, 0.02)
-        new_samples[sample_i, :] = new_sample
+        for art_i in (0, artificial_n):
+            new_sample = np.empty(input_length)
+            for i in range(0, total_features - 1):
+                new_sample[i] = sample[i] + sample[i] * random.uniform(-0.02, 0.02)
+            new_index = (sample_i * artificial_n) + art_i
+            new_samples[new_index, :] = new_sample
 
     print('positive_x shape is %s and %s' % (positive_x.shape[0], positive_x.shape[1]))
 
