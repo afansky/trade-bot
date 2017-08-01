@@ -336,7 +336,7 @@ def generate_artificial_data(x, y):
 
     print('new_samples shape is %s and %s' % (new_samples.shape[0], new_samples.shape[1]))
     all_x = np.concatenate((x, new_samples))
-    all_y = np.concatenate((y, np.ones(len(new_samples))))
+    all_y = np.concatenate((y, np.ones(len(new_samples), dtype=np.dtype('int64'))))
 
     bincount = np.bincount(all_y)
     print('Final list has %s positive and %s negative samples' % (bincount[0], bincount[1]))
@@ -374,7 +374,7 @@ def find_incremental_regularization():
             train_x = scaler.fit_transform(train_x)
             test_x = scaler.transform(test_x)
 
-            test_x, test_y = generate_artificial_data(test_x, test_y)
+            train_x, train_y = generate_artificial_data(train_x, train_y)
 
             test_data[current_ticker] = (test_x, test_y)
 
