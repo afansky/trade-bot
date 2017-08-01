@@ -339,7 +339,7 @@ def generate_artificial_data(x, y):
     all_y = np.concatenate((np.int64(y), np.ones(len(new_samples), dtype=np.dtype('int64'))))
 
     bincount = np.bincount(all_y)
-    print('Final list has %s positive and %s negative samples' % (bincount[0], bincount[1]))
+    print('Final list has %s positive and %s negative samples' % (bincount[1], bincount[0]))
 
     return all_x, all_y
 
