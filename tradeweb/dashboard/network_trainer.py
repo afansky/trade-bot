@@ -8,7 +8,8 @@ import logging
 import stockstats as ss
 import random
 from sklearn import svm
-from sklearn.metrics import mean_squared_error, f1_score, classification_report, confusion_matrix, precision_recall_curve
+from sklearn.metrics import mean_squared_error, f1_score, classification_report, confusion_matrix, \
+    precision_recall_curve
 from sklearn.model_selection import train_test_split, cross_val_score
 import math
 import matplotlib.pyplot as plt
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 ticker_data = ['btcebtcusd', 'bitstampbtcusd']
 # ticker_data = ['btcebtcusd']
-frame_length = 10
+frame_length = 12
 total_features = 20
 
 
@@ -314,6 +315,35 @@ def find_regularization():
     input('Press Enter')
 
 
+def generate_artificial_data(x, y):
+    print('Generating artificial data')
+
+    positive_x = x[y == 1]
+    negative_x = x[y == 0]
+
+    print('Found %s positive and %s negative samples' % (len(positive_x), len(negative_x)))
+
+    input_length = frame_length * total_features
+    new_samples = np.empty(shape=(len(positive_x), input_length))
+
+    for sample_i, sample in enumerate(positive_x):
+        new_sample = np.empty(input_length)
+        for i in range(0, total_features - 1):
+            new_sample[i] = sample[i] + sample[i] * random.uniform(-0.02, 0.02)
+        new_samples[sample_i, :] = new_sample
+
+    print('positive_x shape is %s and %s' % (positive_x.shape[0], positive_x.shape[1]))
+
+    print('new_samples shape is %s and %s' % (new_samples.shape[0], new_samples.shape[1]))
+    all_x = np.concatenate((x, new_samples))
+    all_y = np.concatenate((y, np.ones(len(new_samples))))
+
+    bincount = np.bincount(all_y)
+    print('Final list has %s positive and %s negative samples' % (bincount[0], bincount[1]))
+
+    return all_x, all_y
+
+
 def find_incremental_regularization():
     print('Training network...')
 
@@ -344,6 +374,8 @@ def find_incremental_regularization():
             train_x = scaler.fit_transform(train_x)
             test_x = scaler.transform(test_x)
 
+            test_x, test_y = generate_artificial_data(test_x, test_y)
+
             test_data[current_ticker] = (test_x, test_y)
 
             nn.fit(train_x, train_y)
@@ -360,11 +392,12 @@ def find_incremental_regularization():
             print('Running predictions on the test set from ticker %s' % current_ticker)
             (test_x, test_y) = test_data[current_ticker]
             test_predict = nn.predict(test_x)
-            test_predict_proba = nn.predict_proba(test_x)[:, 1] #predictions for class=1 only
+            test_predict_proba = nn.predict_proba(test_x)[:, 1]  # predictions for class=1 only
             print('Test set error: %s' % f1_score(test_y, test_predict))
             print(classification_report(test_y, test_predict))
             print(confusion_matrix(test_y, test_predict))
-            print('Test_y length is %s, test_predict_proba length is %s' % ((test_y.shape,), (test_predict_proba.shape,)))
+            print(
+                'Test_y length is %s, test_predict_proba length is %s' % ((test_y.shape,), (test_predict_proba.shape,)))
             precision, recall, thresholds = precision_recall_curve(test_y, test_predict_proba)
             print('Saving Precision, recall, threshold arrays...')
             np.save('prc/prc_precision_%s_%s.npy' % (alpha, current_ticker), precision)
@@ -400,10 +433,10 @@ def calculate_indicators(df):
     df_stock['close_xu_close_7_sma']
     df_stock['close_xu_close_14_sma']
     df_stock['close_7_sma_xu_close_21_sma']
-#    df_stock['cci_5']
-#    df_stock['cci_14']
-#    df_stock['cci_5_-100.0_le_10_c']
-#    df_stock['cci_14_-100.0_le_10_c']
+    #    df_stock['cci_5']
+    #    df_stock['cci_14']
+    #    df_stock['cci_5_-100.0_le_10_c']
+    #    df_stock['cci_14_-100.0_le_10_c']
 
     df_stock.loc[df_stock['rsi_7'] <= 30, 'rsi_buy'] = 1
     df_stock.loc[df_stock['rsi_7'] > 30, 'rsi_buy'] = 0
@@ -527,20 +560,20 @@ if __name__ == '__main__':
     # print('Alpha=%s, i1=%s, i2=%s, i3=%s' % (min_params[0], min_params[1], min_params[2], min_params[3]))
     # prepare_data('btcebtcusd')
 
-#    find_buy_points('bitstampbtcusd')
-    #for ticker in ticker_data:
-#    periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
-#    for period in periods:
-#        import_resampled_data('../../../data/btcnCNY.csv', 'btcnbtccny', period)
-#    find_buy_points('btcnbtccny')
-#     prepare_data('btcnbtccny')
-#     for ticker in ticker_data:
-#         prepare_data(ticker)
+    #    find_buy_points('bitstampbtcusd')
+    # for ticker in ticker_data:
+    #    periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
+    #    for period in periods:
+    #        import_resampled_data('../../../data/btcnCNY.csv', 'btcnbtccny', period)
+    #    find_buy_points('btcnbtccny')
+    #     prepare_data('btcnbtccny')
+    #     for ticker in ticker_data:
+    #         prepare_data(ticker)
     find_incremental_regularization()
     # repeat_training_network()
     # find_buy_points()
-    #periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
-    #for period in periods:
+    # periods = ['1T', '3T', '5T', '15T', '30T', '1h', '2h', '4h', '6h', '12h', '1d', '3d']
+    # for period in periods:
     #    import_resampled_data('../../../data/bitstampUSD.csv', 'bitstampbtcusd', period)
 
     # show_prc()
