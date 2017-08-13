@@ -1,8 +1,21 @@
 import requests
 import json
 from pymongo import MongoClient
+import logging
+import datasaver_config
 
 xbtusd_url = 'https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1'
+
+log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+logging.basicConfig(level=logging.INFO, format=log_format)
+logger = logging.getLogger('nxt')
+formatter = logging.Formatter(log_format)
+handler = logging.FileHandler(datasaver_config.log_path)
+handler.setLevel(logging.INFO)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 
 response = requests.get(xbtusd_url)
 response_json = json.loads(response.text)
