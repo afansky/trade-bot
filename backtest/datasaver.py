@@ -52,4 +52,4 @@ for row in ohlc:
 
     inserted_rows = inserted_rows + 1
 
-print('inserted %s rows' % inserted_rows)
+logger.info('inserted %s rows' % inserted_rows)
