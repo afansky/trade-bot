@@ -16,8 +16,9 @@ from sklearn import preprocessing
 import math
 
 # database_name = 'btcebtcusd'
-database_name = 'bitstampbtcusd'
-points_collection = 'btcebtcusd_points_auto'
+mongo_db_name = 'backtest'
+database_name = 'kraken_xxbtzusd'
+points_collection = 'kraken_xxbtzusd'
 
 # Create your views here.
 
@@ -43,8 +44,10 @@ def series(request):
     A view that returns the count of active users in JSON.
     """
 
-    start = datetime.datetime.fromtimestamp(int(request.POST['start']) / 1000)
-    end = datetime.datetime.fromtimestamp(int(request.POST['end']) / 1000)
+    start_int = int(request.POST['start']) / 1000
+    start = datetime.datetime.fromtimestamp(start_int)
+    end_int = int(request.POST['end']) / 1000
+    end = datetime.datetime.fromtimestamp(end_int)
 
     delta_days = (end - start).days
     delta_hours = -1
@@ -52,7 +55,7 @@ def series(request):
         delta_hours = (end - start).seconds // 3600
 
     client = MongoClient("mongodb://localhost:27017")
-    db = client.bitcoinbot
+    db = client[mongo_db_name]
 
     if delta_days == 0 and 0 < delta_hours <= 2:
         resolution = '1T'
@@ -91,29 +94,28 @@ def series(request):
         resolution = '3d'
         resolution_second = 60 * 60 * 24 * 3
 
+
+    # for testing
+    resolution = '1T'
+    resolution_second = 60
+
     ticks = db[database_name + '_' + resolution].find(
-        {'time': {'$lt': end, '$gte': start - datetime.timedelta(seconds=35 * resolution_second)}}).sort([('_id', 1)])
+        {'time': {'$lt': end_int, '$gte': start_int - 35 * resolution_second}}).sort([('_id', 1)])
 
     df = pd.DataFrame.from_records(list(ticks), columns=['time', 'open', 'high', 'low', 'close', 'volume'])
     df = df.set_index(['time'])
     df = df.bfill()
-    calculate_indicators(df)
-    df = df[35:]
-
-    positive_points = load_selected_points()
+    # calculate_indicators(df)
+    # df = df[35:]
 
     data = []
     for i, row in df.iterrows():
-        point_time = int(time.mktime(i.timetuple())) * 1000
+        point_time = i * 1000
 
         point_type = 'unselected'
-        for p in positive_points:
-            if p['time'] == point_time:
-                point_type = p['type']
 
         data.append(
-            [point_time, row['open'], row['high'], row['low'], row['close'], row['volume'],
-             row['ma_7'], row['ma_25'], row['rsi_7'], row['bb_up'], row['bb_down'], point_type])
+            [point_time, float(row['open']), float(row['high']), float(row['low']), float(row['close']), float(row['volume']), point_type])
 
     response = {
         'data': data,
@@ -144,10 +146,10 @@ def calculate_indicators(df):
 @renderer_classes((JSONRenderer,))
 def init(request):
     client = MongoClient("mongodb://localhost:27017")
-    db = client.bitcoinbot
-    end = db[database_name + "_2h"].find({}, {'time': 1, '_id': 0}).sort([('time', -1)]).limit(1).next()['time']
-    start = db[database_name + "_2h"].find({}, {'time': 1, '_id': 0}).sort([('time', 1)]).limit(1).next()['time']
-    response = {'start': time.mktime(start.timetuple()) * 1000, 'end': time.mktime(end.timetuple()) * 1000}
+    db = client[mongo_db_name]
+    end = db[database_name + "_1T"].find({}, {'time': 1, '_id': 0}).sort([('time', -1)]).limit(1).next()['time']
+    start = db[database_name + "_1T"].find({}, {'time': 1, '_id': 0}).sort([('time', 1)]).limit(1).next()['time']
+    response = {'start': start * 1000, 'end': end * 1000}
     return Response(response)
 
 
@@ -160,12 +162,12 @@ def points(request):
 
 def load_selected_points():
     client = MongoClient("mongodb://localhost:27017")
-    db = client.bitcoinbot
+    db = client[mongo_db_name]
     ticks = db[points_collection].find({}, {'time': 1, 'price': 1, 'type': 1, 'resolution': 1, '_id': 0}).sort(
         [('time', -1)])
     tick_list = list(ticks)
     for tick in tick_list:
-        tick['time'] = int(time.mktime(tick['time'].timetuple()) * 1000)
+        tick['time'] = int(tick['time'] * 1000)
     return tick_list
 
 
@@ -175,7 +177,7 @@ def add_point(request):
     point_time = datetime.datetime.fromtimestamp(int(request.POST['time']) / 1000)
     point_resolution = request.POST['resolution']
     client = MongoClient("mongodb://localhost:27017")
-    db = client.bitcoinbot
+    db = client[mongo_db_name]
     tick = db[database_name + '_' + point_resolution].find_one({'time': point_time})
 
     point_type = request.POST['type']
@@ -193,7 +195,7 @@ def add_point(request):
 def remove_point(request):
     point_time = datetime.datetime.fromtimestamp(int(request.POST['time']) / 1000)
     client = MongoClient("mongodb://localhost:27017")
-    db = client.bitcoinbot
+    db = client[mongo_db_name]
     db[points_collection].remove({'time': point_time})
     return Response(True)
 
@@ -210,4 +212,4 @@ def rsi(df):
     rs_value = average_gain / average_loss
     rsi_result = 100.0 - (100.0 / (1.0 + rs_value))
     rsi_result = rsi_result.bfill()
-    return rsi_result8
+    return rsi_result

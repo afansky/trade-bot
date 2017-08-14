@@ -37,6 +37,12 @@ for pair, value in pairs.items():
     get_olhc_url = xbtusd_url % pair
     response = requests.get(get_olhc_url)
     response_json = json.loads(response.text)
+
+    if 'result' not in response_json:
+        logger.error("can't fetch pair %s" % pair)
+        logger.error(response_json)
+        continue
+
     ohlc = response_json['result'][pair]
 
     db_pair = "kraken_%s_1T" % pair.lower()
@@ -54,14 +60,14 @@ for pair, value in pairs.items():
             continue
 
         data = {
-            'time': row_time,
-            'open': row_open,
-            'high': row_high,
-            'low': row_low,
-            'close': row_close,
-            'vwap': row_vwap,
-            'volume': row_volume,
-            'count': row_count
+            'time': int(row_time),
+            'open': float(row_open),
+            'high': float(row_high),
+            'low': float(row_low),
+            'close': float(row_close),
+            'vwap': float(row_vwap),
+            'volume': float(row_volume),
+            'count': int(row_count)
         }
 
         db[db_pair].insert(data)

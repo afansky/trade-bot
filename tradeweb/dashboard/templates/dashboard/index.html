@@ -83,24 +83,12 @@
             // split the data set into ohlc and volume
             var ohlc = [],
                 volume = [],
-                ma_7 = [],
-                ma_25 = [],
-                rsi = [],
-                bb_up = [],
-                bb_down = [],
                 dataLength = data.length,
                 // set the allowed units for data grouping
 
                 i = 0;
 
             for (i; i < dataLength; i += 1) {
-                let color = '';
-                let type = data[i][11];
-                if (type === 'positive') {
-                    color = 'yellow';
-                } else if (type === 'negative') {
-                    color = 'blue';
-                }
                 ohlc.push(
                     {
                         x: data[i][0],
@@ -108,9 +96,7 @@
                         high: data[i][2],
                         low: data[i][3],
                         close: data[i][4],
-                        name: '',
-                        color: color,
-                        type: type
+                        name: ''
                     }
                 );
 
@@ -119,39 +105,10 @@
                     data[i][5]
                 ]);
 
-                ma_7.push([
-                    data[i][0],
-                    data[i][6]
-                ]);
-
-                ma_25.push([
-                    data[i][0],
-                    data[i][7]
-                ]);
-
-                rsi.push([
-                    data[i][0],
-                    data[i][8]
-                ]);
-
-                bb_up.push([
-                    data[i][0],
-                    data[i][9]
-                ]);
-
-                bb_down.push([
-                    data[i][0],
-                    data[i][10]
-                ]);
             }
 
             chart.series[0].setData(ohlc);
-            chart.series[1].setData(ma_7);
-            chart.series[2].setData(volume);
-            chart.series[3].setData(ma_25);
-            chart.series[4].setData(rsi);
-            chart.series[5].setData(bb_up);
-            chart.series[6].setData(bb_down);
+            chart.series[1].setData(volume);
             chart.hideLoading();
             updateSelectedPoints();
         }, "json");
@@ -307,12 +264,7 @@
             // split the data set into ohlc and volume
             var ohlc = [],
                 volume = [],
-                ma_7 = [],
-                ma_25 = [],
-                rsi = [],
                 navigator = [],
-                bb_up = [],
-                bb_down = [],
                 dataLength = data.length,
                 // set the allowed units for data grouping
 
@@ -324,10 +276,6 @@
                     data[i][4]
                 ]);
 
-                let color = '';
-                let type = data[i][11];
-                color = getTypeColor(type, color);
-
                 ohlc.push(
                     {
                         x: data[i][0],
@@ -335,40 +283,13 @@
                         high: data[i][2],
                         low: data[i][3],
                         close: data[i][4],
-                        name: '',
-                        color: color,
-                        type: type
+                        name: ''
                     }
                 );
 
                 volume.push([
                     data[i][0], // the date
                     data[i][5] // the volume
-                ]);
-
-                ma_7.push(
-                    data[i][0],
-                    data[i][6]
-                );
-
-                ma_25.push([
-                    data[i][0],
-                    data[i][7]
-                ]);
-
-                rsi.push([
-                    data[i][0],
-                    data[i][8]
-                ]);
-
-                bb_up.push([
-                    data[i][0],
-                    data[i][9]
-                ]);
-
-                bb_down.push([
-                    data[i][0],
-                    data[i][10]
                 ]);
             }
 
@@ -506,40 +427,10 @@
                         },
                     },
                     {
-                        name: 'MA7',
-                        data: ma_7,
-                        zIndex: 5
-                    },
-                    {
                         type: 'column',
                         name: 'Volume',
                         data: volume,
                         yAxis: 1,
-                    },
-                    {
-                        name: 'MA25',
-                        data: ma_25,
-                        zIndex: 4
-                    },
-                    {
-                        type: 'line',
-                        name: 'RSI',
-                        data: rsi,
-                        yAxis: 2,
-                    },
-                    {
-                        type: 'line',
-                        name: 'BB Up',
-                        data: bb_up,
-                        lineWidth: 1,
-                        zIndex: 3
-                    },
-                    {
-                        type: 'line',
-                        name: 'BB Down',
-                        data: bb_down,
-                        lineWidth: 1,
-                        zIndex: 3
                     },
                 ],
 
@@ -564,7 +455,7 @@
                         title: {
                             text: 'OHLC'
                         },
-                        height: '60%',
+                        height: '80%',
                         lineWidth: 2,
                         type: 'logarithmic'
                     }, {
@@ -574,18 +465,6 @@
                         },
                         title: {
                             text: 'Volume'
-                        },
-                        top: '60%',
-                        height: '20%',
-                        offset: 0,
-                        lineWidth: 2
-                    }, {
-                        labels: {
-                            align: 'right',
-                            x: -3
-                        },
-                        title: {
-                            text: 'RSI'
                         },
                         top: '80%',
                         height: '20%',
